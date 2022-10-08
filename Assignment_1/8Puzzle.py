@@ -14,7 +14,7 @@ the matrix is divided equally so,
 
 class Puzzle:
     
-    def __init__(self, size, shuffle=True):
+    def __init__(self, size=3, shuffle=True):
         self.size = size    
         self.puzzle = []#[1, 2, 3, 4, 5, 6, 7, 8, 0]
         self.createPuz(size)
@@ -27,13 +27,33 @@ class Puzzle:
         self.puzzle.append(0)
 
     def __str__(self):
-        return "{}".format(self.puzzle)
+        return "_____________\n| {0} | {1} | {2} |\n" \
+            "| {3} | {4} | {5} |\n| {6} | {7} | {8} |\n~~~~~~~~~~~~~".format(*self.puzzle)
+        
+
 
     def scramble(self):
         random.shuffle(self.puzzle)
 
+    def up(self):
+        if(0 in self.puzzle[0:self.size]):
+            print("in top")
+            
+
+    def down(self):
+        if(0 in self.puzzle[((self.size ** 2)-self.size):] ):
+            print("in bottom")
+
+    def right(self):
+        pass
+
+    def left(self):
+        pass
 
 
 
-x = Puzzle(5)
+
+x = Puzzle()
 print(x)
+x.up()
+x.down()
