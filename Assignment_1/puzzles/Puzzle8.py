@@ -22,8 +22,11 @@ class Puzzle:
         self.puzzle = []  # [1, 2, 3, 4, 5, 6, 7, 8, 0]
         self.createPuz(size)
         self._index = 8
+        self._dist = 0
+        self._solved = False
         if(shuffle):
             self.scramble()
+            self.distCheck()
 
     def createPuz(self, size):
         for x in range(1, size*size):
@@ -48,45 +51,65 @@ class Puzzle:
         random.shuffle(self.puzzle)
         self.findIndex()
 
-    def isSolved(self):
+    def distCheck(self):
         dist = 0
 
         for i, j in zip(self.puzzle, range(9)):
-            if i != j:
-                solved = False
+            #print(i, "  ", j + 1)
+            if i != (j + 1) and (i != 0 ):
+                dist += 1
 
-        return solved
+        self._dist = dist
+        return dist
 
     def up(self):
         if(0 in self.puzzle[((self.size ** 2)-self.size):]):
             print("in bottom: invalid")
+            return False
         else:
             self.puzzle[self._index], self.puzzle[self._index +
                                                   3] = self.puzzle[self._index + 3], self.puzzle[self._index]
+            self.distCheck()
+            return True
 
     def down(self):
         if(0 in self.puzzle[0:self.size]):
             print("in top: invalid")
+            return False
         else:
             self.puzzle[self._index], self.puzzle[self._index -
                                                   3] = self.puzzle[self._index - 3], self.puzzle[self._index]
+            self.distCheck()
+            return True
 
     def right(self):
         if (self._index != 0 and self._index != 3 and self._index != 6):
             #swap the index to the left 
             self.puzzle[self._index], self.puzzle[self._index -
                                                   1] = self.puzzle[self._index - 1], self.puzzle[self._index]
+            self.distCheck()
+            return True
         else:
             print("Invalid Move")
+            return False
 
     def left(self):
         if (self._index != 2 and self._index != 5 and self._index != 8):
             #swap the index to the right
             self.puzzle[self._index], self.puzzle[self._index +
                                                   1] = self.puzzle[self._index + 1], self.puzzle[self._index]
+            self.distCheck()
+            return True
         else:
             print("Invalid Move")
+            return False 
 
+    def __iter__(self):
+        for v in self.puzzle:
+            yield v
+    
+    def __lt__(self, obj):
+        return self._dist < obj._dist
 
 '''
 Testing
