@@ -1,6 +1,8 @@
 import math
 import random
 
+from cv2 import solve
+
 '''
 Zero is the place holder for the empty square.
 the matrix is divided equally so,
@@ -46,6 +48,15 @@ class Puzzle:
         random.shuffle(self.puzzle)
         self.findIndex()
 
+    def isSolved(self):
+        dist = 0
+
+        for i, j in zip(self.puzzle, range(9)):
+            if i != j:
+                solved = False
+
+        return solved
+
     def up(self):
         if(0 in self.puzzle[((self.size ** 2)-self.size):]):
             print("in bottom: invalid")
@@ -77,6 +88,8 @@ class Puzzle:
             print("Invalid Move")
 
 
+'''
+Testing
 x = Puzzle()
 
 
@@ -85,3 +98,6 @@ print(x.findIndex())
 print(x)
 x.down()
 print(x)
+
+'''
+
