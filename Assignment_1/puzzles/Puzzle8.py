@@ -24,6 +24,9 @@ class Puzzle:
         self._index = 8
         self._dist = 0
         self._solved = False
+        self._globalCost = 0
+        self.parent_node = None
+        
         if(shuffle):
             self.scramble()
             self.distCheck()
@@ -64,22 +67,24 @@ class Puzzle:
 
     def up(self):
         if(0 in self.puzzle[((self.size ** 2)-self.size):]):
-            print("in bottom: invalid")
+            #print("in bottom: invalid")
             return False
         else:
             self.puzzle[self._index], self.puzzle[self._index +
                                                   3] = self.puzzle[self._index + 3], self.puzzle[self._index]
             self.distCheck()
+            self.findIndex()
             return True
 
     def down(self):
         if(0 in self.puzzle[0:self.size]):
-            print("in top: invalid")
+            #print("in top: invalid")
             return False
         else:
             self.puzzle[self._index], self.puzzle[self._index -
                                                   3] = self.puzzle[self._index - 3], self.puzzle[self._index]
             self.distCheck()
+            self.findIndex()
             return True
 
     def right(self):
@@ -88,9 +93,10 @@ class Puzzle:
             self.puzzle[self._index], self.puzzle[self._index -
                                                   1] = self.puzzle[self._index - 1], self.puzzle[self._index]
             self.distCheck()
+            self.findIndex()
             return True
         else:
-            print("Invalid Move")
+            #print("Invalid Move")
             return False
 
     def left(self):
@@ -99,9 +105,10 @@ class Puzzle:
             self.puzzle[self._index], self.puzzle[self._index +
                                                   1] = self.puzzle[self._index + 1], self.puzzle[self._index]
             self.distCheck()
+            self.findIndex()
             return True
         else:
-            print("Invalid Move")
+            #print("Invalid Move")
             return False 
 
     def __iter__(self):
@@ -109,7 +116,8 @@ class Puzzle:
             yield v
     
     def __lt__(self, obj):
-        return self._dist < obj._dist
+        return (self._dist + self._globalCost) < (obj._dist + obj._globalCost)
+            
 
 '''
 Testing
