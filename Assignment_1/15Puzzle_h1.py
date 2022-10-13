@@ -1,39 +1,41 @@
-from puzzles import Puzzle8
+from puzzles import Puzzle15
 from copy import deepcopy
 from queue import PriorityQueue
 '''
- h2 = the sum of the distances of the tiles from 
-their goal positions. Because tiles cannot move 
-along diagonals, the distance we will count is 
-the sum of the horizontal and vertical distances. 
- This is sometimes called the city block distance 
-or Manhattan distance. h is also admissible because 
-all any move can do is move one tile one step 2 
-closer to the goal. Tiles 1 to 8 in the start state 
-give a Manhattan distance of
-
-h2 =3+1+2+2+2+3+3+2=18.
-
-
-As expected, neither of these overestimates the true 
-solution cost, which is 26.
+h1 = the number of misplaced tiles. For Figure 3.28, 
+all of the eight tiles are out of position, so the 
+start state would have h1 = 8. h1 is an admissible 
+heuristic because it is clear that any tile that is 
+out of place must be moved at least once.
 '''
+"""
+x =[]
+for i in range(100):
+    x.append(Puzzle8.Puzzle())
+
+print(x[0])
+"""
+
 
 q = PriorityQueue()
 explored = []
 cost = 0
-y = Puzzle8.Puzzle(manhat=True)
+y = Puzzle15.Puzzle(manhat=False)
+
 
 
 x = y
-if True:
-    x.puzzle = [3, 6, 2, 5, 0, 7, 4, 1, 8]
-    x.distCheck()
-    x.findIndex()
+
+# [1,2,3,4,5,6,7,8,9,10,11,12,0,13,14,15]
+# [2,7,1,13,14,5,15,10,11,3,0,4,12,9,6,8]
+# [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
+x.puzzle = [1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
+x.distCheck()
+x.findIndex()
 
 explored.append(x.puzzle)
 
-while x._dist != 0 and cost < 20000:
+while x._dist != 0 and cost < 200:
     up = deepcopy(x)
     down = deepcopy(x)
     left = deepcopy(x)
@@ -49,25 +51,27 @@ while x._dist != 0 and cost < 20000:
         q.put(up)
         explored.append(up.puzzle)
         up.parent_node = x
-        #print(up, up.puzzle, "up", up._index, "index", "\n\n")
+        
     if x2 and down.puzzle not in explored:
         q.put(down)
         explored.append(down.puzzle)
         down.parent_node = x
-        #print(down, down.puzzle, "down", down._index, "index", "\n\n\n")
+        
     if x3 and left.puzzle not in explored:
         q.put(left)
         explored.append(left.puzzle)
         left.parent_node = x
-        #print(left, left.puzzle, "left", left._index, "index", "\n\n\n")
+        
     if x4 and right.puzzle not in explored:
         q.put(right)
         explored.append(right.puzzle)
         right.parent_node = x
-        #print(right, right.puzzle, "right", right._index, "index", "\n\n")
+        
 
     x = q.get()
     x._globalCost += 1
+    print(cost)
+    #print(x._dist, " -------", x._globalCost)
     cost += 1
 
 
@@ -79,4 +83,5 @@ while temp.parent_node != None:
 
 for i in lst:
     print(i)
+    print(i._index)
 print(x)
