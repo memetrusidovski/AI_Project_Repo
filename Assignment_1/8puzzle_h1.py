@@ -27,7 +27,7 @@ z = Puzzle8.Puzzle(shuffle=False)
 
 
 x = y
-x.puzzle = [3,6,2,5,0,7,4,1,8]
+x.puzzle = [3,4,6,1,2,8,7,5,0]
 x.distCheck()
 x.findIndex()
 
@@ -83,6 +83,7 @@ while not q.empty():
 """
 x._globalCost += 1
 
+#Upper Limit
 while x._dist != 0 and cost < 20000:
     up = deepcopy(x)
     down = deepcopy(x)
@@ -124,14 +125,22 @@ while x._dist != 0 and cost < 20000:
 
     x = q.get()
     x._globalCost += 1 
-    print(x)
-    print(x._dist, " -------", x._globalCost)
+    #print(x)
+    #print(x._dist, " -------", x._globalCost)
     cost += 1
 
 
 
+temp = x
+lst = []
+while temp.parent_node != None:
+    lst.append(temp)
+    temp = temp.parent_node
 
-print(x)
+for i in lst:
+    print(i)
+
+
 """
 nodes = [x,y,z]
 
