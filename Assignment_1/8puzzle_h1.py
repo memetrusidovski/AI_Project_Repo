@@ -27,6 +27,7 @@ z = Puzzle8.Puzzle(shuffle=False)
 
 
 x = y
+#A test puzzle since very scrambled puzzles take a long time to compute 
 x.puzzle = [3,4,6,1,2,8,7,5,0]
 x.distCheck()
 x.findIndex()
