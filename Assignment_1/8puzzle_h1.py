@@ -24,9 +24,16 @@ cost = 0
 y = Puzzle8.Puzzle()
 z = Puzzle8.Puzzle(shuffle=False)
 
-x = y
 
-while x._dist != 0:
+
+x = y
+x.puzzle = [3,6,2,5,0,7,4,1,8]
+x.distCheck()
+x.findIndex()
+
+explored.append(x.puzzle)
+"""
+while x._dist != 0 and cost < 20:
     up = deepcopy(x)
     down = deepcopy(x)
     left = deepcopy(x)
@@ -37,8 +44,6 @@ while x._dist != 0:
     x2 = down.down()
     x3 = left.left()
     x4 = right.right()
-
-    print(explored)
 
     up._globalCost = cost
     down._globalCost = cost
@@ -51,27 +56,82 @@ while x._dist != 0:
         up.parent_node = x
     if x2 and down not in explored:
         q.put(down)
+        explored.append(down)
         down.parent_node = x
     if x3 and left not in explored:
         q.put(left)
+        explored.append(left)
         left.parent_node = x
     if x4 and right not in explored:
         q.put(right)
+        explored.append(right)
         right.parent_node = x
 
     x = q.get()
+    print(x._dist, " -------", x._globalCost)
     cost += 1
 
 
-
-print(x, "   \n\n", x._globalCost)
+if(z in explored):
+    print(x, " <><><><>  \n\n", x._globalCost)
 
 while not q.empty():
     next_item = q.get()
     print(next_item._dist + next_item._globalCost, "\n~~~~~~~~~\n")
 
 
+"""
+x._globalCost += 1
 
+while x._dist != 0 and cost < 20000:
+    up = deepcopy(x)
+    down = deepcopy(x)
+    left = deepcopy(x)
+    right = deepcopy(x)
+
+    x1 = up.up()
+    x2 = down.down()
+    x3 = left.left()
+    x4 = right.right()
+
+    """up._globalCost += 1 
+    down._globalCost += 1 
+    left._globalCost += 1
+    right._globalCost += 1"""
+
+    #print(x)
+
+    if x1 and up.puzzle not in explored:
+        q.put(up)
+        explored.append(up.puzzle)
+        up.parent_node = x
+        #print(up, up.puzzle, "up", up._index, "index", "\n\n")
+    if x2 and down.puzzle not in explored:
+        q.put(down)
+        explored.append(down.puzzle)
+        down.parent_node = x
+        #print(down, down.puzzle, "down", down._index, "index", "\n\n\n")
+    if x3 and left.puzzle not in explored:
+        q.put(left)
+        explored.append(left.puzzle)
+        left.parent_node = x
+        #print(left, left.puzzle, "left", left._index, "index", "\n\n\n")
+    if x4 and right.puzzle not in explored:
+        q.put(right)
+        explored.append(right.puzzle)
+        right.parent_node = x
+        #print(right, right.puzzle, "right", right._index, "index", "\n\n")
+
+    x = q.get()
+    x._globalCost += 1 
+    print(x)
+    print(x._dist, " -------", x._globalCost)
+    cost += 1
+
+
+
+
+print(x)
 """
 nodes = [x,y,z]
 

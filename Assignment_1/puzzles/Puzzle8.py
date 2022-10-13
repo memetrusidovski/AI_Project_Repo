@@ -43,10 +43,11 @@ class Puzzle:
 
     def findIndex(self):
         i = 0
-        for x in range(8):
+        for x in range(9):
             if self.puzzle[x] == 0:
                 i = x
                 self._index = i
+            #print(self.puzzle[x], "{\}", end="")
 
         return i
 
@@ -74,6 +75,7 @@ class Puzzle:
                                                   3] = self.puzzle[self._index + 3], self.puzzle[self._index]
             self.distCheck()
             self.findIndex()
+            #print(self._index,"......")
             return True
 
     def down(self):
