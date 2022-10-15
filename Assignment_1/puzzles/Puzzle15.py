@@ -16,16 +16,17 @@ the matrix is divided equally so,
 
 class Puzzle:
 
-    def __init__(self, size=4, shuffle=True, manhat=False):
+    def __init__(self, size=4, shuffle=True, manhat=False, ecd=False):
         self.size = size
         self.puzzle = []  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
         self.createPuz(size)
-        self._index = 8
+        self._index = 16
         self._dist = 0
         self._solved = False
         self._globalCost = 0
         self.parent_node = None
         self._manhat = manhat
+        self._ecd = ecd
 
         if(shuffle):
             self.scramble()
@@ -63,11 +64,20 @@ class Puzzle:
             g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                             11, 12, 13, 14, 15, 0]).reshape(4, 4)
 
-            for i in range(15):
+            for i in range(16):
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
                 dist += abs((a-x)[0])+abs((b-y)[0])
 
+        if self._ecd:
+            g1 = np.asarray(self.puzzle).reshape(4, 4)
+            g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                            11, 12, 13, 14, 15, 0]).reshape(4, 4)
+
+            for i in range(16):
+                a, b = np.where(g1 == i+1)
+                x, y = np.where(g2 == i+1)
+                dist += math.sqrt((abs((a-x)[0]) ** 2) + (abs((b-y)[0]) ** 2))
         else:
             for i, j in zip(self.puzzle, range(16)):
                 if i != (j + 1) and (i != 0):

@@ -27,7 +27,7 @@ y = Puzzle8.Puzzle(manhat=True)
 
 x = y
 if True:
-    x.puzzle = [3, 6, 2, 5, 0, 7, 4, 1, 8]
+    x.puzzle = [8,6,7,2,5,4,3,0,1]#[5,1,4,6,3,8,0,7,2]#[3, 6, 2, 5, 0, 7, 4, 1, 8]
     x.distCheck()
     x.findIndex()
 
@@ -79,4 +79,5 @@ while temp.parent_node != None:
 
 for i in lst:
     print(i)
-print(x)
+
+print(x._globalCost)

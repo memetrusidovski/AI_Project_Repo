@@ -13,3 +13,6 @@ for i in range(8):
     d = d + abs((a-x)[0])+abs((b-y)[0])
     
 print(d)
+
+for q in range(15):
+    print(q)

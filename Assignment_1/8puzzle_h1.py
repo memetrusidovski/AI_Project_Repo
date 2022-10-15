@@ -28,13 +28,13 @@ z = Puzzle8.Puzzle(shuffle=False)
 
 x = y
 
-x.puzzle = [3,6,2,5,0,7,4,1,8]
+x.puzzle = [8, 6, 7, 2, 5, 4, 3, 0, 1]#[5, 1, 4, 6, 3, 8, 0, 7, 2]  # [3, 6, 2, 5, 0, 7, 4, 1, 8]
 x.distCheck()
 x.findIndex()
 
 explored.append(x.puzzle)
 
-while x._dist != 0 and cost < 20000:
+while x._dist != 0 and cost < 2000000:
     up = deepcopy(x)
     down = deepcopy(x)
     left = deepcopy(x)

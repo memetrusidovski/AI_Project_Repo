@@ -16,17 +16,16 @@ the matrix is divided equally so,
 
 class Puzzle:
 
-    def __init__(self, size=3, shuffle=True, manhat=False, ecd=False):
+    def __init__(self, size=5, shuffle=True, manhat=False):
         self.size = size
-        self.puzzle = []  # [1, 2, 3, 4, 5, 6, 7, 8, 0]
+        self.puzzle = [] 
         self.createPuz(size)
-        self._index = 8
+        self._index = 25
         self._dist = 0
         self._solved = False
         self._globalCost = 0
         self.parent_node = None
-        self._manhat=manhat
-        self._ecd = ecd
+        self._manhat = manhat
 
         if(shuffle):
             self.scramble()
@@ -38,13 +37,15 @@ class Puzzle:
         self.puzzle.append(0)
 
     def __str__(self):
-        return "_____________\n| {0} | {1} | {2} |\n" \
-            "| {3} | {4} | {5} |\n| {6} | {7} | {8} |\n~~~~~~~~~~~~~".format(
+        return "__________________________\n| {0:2d} | {1:2d} | {2:2d} | {3:2d} | {4:2d} |\n" \
+            "| {5:2d} | {6:2d} | {7:2d} | {8:2d} | {9:2d} |\n| {10:2d} | {11:2d} | {12:2d} | {13:2d} | {14:2d} |\n" \
+            "| {15:2d} | {16:2d} | {17:2d} | {18:2d} | {19:2d} |\n" \
+            "| {20:2d} | {21:2d} | {22:2d} | {23:2d} | {24:2d} |\n~~~~~~~~~~~~~~~~~~~~~~~~~~".format(
                 *self.puzzle)
 
     def findIndex(self):
         i = 0
-        for x in range(9):
+        for x in range(25):
             if self.puzzle[x] == 0:
                 i = x
                 self._index = i
@@ -59,25 +60,18 @@ class Puzzle:
     def distCheck(self):
         dist = 0
         if self._manhat:
-            g1 = np.asarray(self.puzzle).reshape(3, 3)
-            g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 0]).reshape(3, 3)
+            g1 = np.asarray(self.puzzle).reshape(5, 5)
+            g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                            11, 12, 13, 14, 15, 0]).reshape(5, 5)
 
-            for i in range(8):
+            for i in range(25):
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
                 dist += abs((a-x)[0])+abs((b-y)[0])
 
-        if self._ecd:
-            g1 = np.asarray(self.puzzle).reshape(3, 3)
-            g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 0]).reshape(3, 3)
-
-            for i in range(8):
-                a, b = np.where(g1 == i+1)
-                x, y = np.where(g2 == i+1)
-                dist +=  math.sqrt((abs((a-x)[0]) ** 2) + (abs((b-y)[0]) ** 2))
         else:
-            for i, j in zip(self.puzzle, range(9)):
-                if i != (j + 1) and (i != 0 ):
+            for i, j in zip(self.puzzle, range(25)):
+                if i != (j + 1) and (i != 0):
                     dist += 1
 
         self._dist = dist
@@ -89,7 +83,7 @@ class Puzzle:
             return False
         else:
             self.puzzle[self._index], self.puzzle[self._index +
-                                                  3] = self.puzzle[self._index + 3], self.puzzle[self._index]
+                                                  5] = self.puzzle[self._index + 5], self.puzzle[self._index]
             self.distCheck()
             self.findIndex()
             #print(self._index,"......")
@@ -101,14 +95,14 @@ class Puzzle:
             return False
         else:
             self.puzzle[self._index], self.puzzle[self._index -
-                                                  3] = self.puzzle[self._index - 3], self.puzzle[self._index]
+                                                  5] = self.puzzle[self._index - 5], self.puzzle[self._index]
             self.distCheck()
             self.findIndex()
             return True
 
     def right(self):
-        if (self._index != 0 and self._index != 3 and self._index != 6):
-            #swap the index to the left 
+        if (self._index != 0 and self._index != 4 and self._index != 9 and self._index != 14 and self._index != 19):
+            #swap the index to the left
             self.puzzle[self._index], self.puzzle[self._index -
                                                   1] = self.puzzle[self._index - 1], self.puzzle[self._index]
             self.distCheck()
@@ -119,7 +113,7 @@ class Puzzle:
             return False
 
     def left(self):
-        if (self._index != 2 and self._index != 5 and self._index != 8):
+        if (self._index != 4 and self._index != 9 and self._index != 14 and self._index != 19 and self._index != 24):
             #swap the index to the right
             self.puzzle[self._index], self.puzzle[self._index +
                                                   1] = self.puzzle[self._index + 1], self.puzzle[self._index]
@@ -128,18 +122,18 @@ class Puzzle:
             return True
         else:
             #print("Invalid Move")
-            return False 
+            return False
 
     def __iter__(self):
         for v in self.puzzle:
             yield v
-    
+
     def __lt__(self, obj):
         return (self._dist + self._globalCost) < (obj._dist + obj._globalCost)
-            
 
-'''
-Testing
+
+
+#Testing
 x = Puzzle()
 
 
@@ -147,7 +141,9 @@ print(x.findIndex())
 
 print(x)
 x.down()
+x.up()
+x.left()
+x.right()
 print(x)
 
-'''
 
