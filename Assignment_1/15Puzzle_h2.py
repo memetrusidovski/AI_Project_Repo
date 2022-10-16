@@ -1,6 +1,8 @@
+import pickle 
 from puzzles import Puzzle15
-from copy import deepcopy
+from copy import deepcopy, copy
 from queue import PriorityQueue
+
 '''
 h1 = the number of misplaced tiles. For Figure 3.28, 
 all of the eight tiles are out of position, so the 
@@ -20,7 +22,7 @@ print(x[0])
 q = PriorityQueue()
 explored = []
 cost = 0
-y = Puzzle15.Puzzle(manhat=False)
+y = Puzzle15.Puzzle(manhat=True)
 
 
 
@@ -30,6 +32,7 @@ x = y
 # [2,7,1,13,14,5,15,10,11,3,0,4,12,9,6,8]
 # [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
 #[1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
+#[6,7,3,4,2,1,10,8,5,13,15,11,9,0,14,12]
 x.puzzle = [2, 7, 1, 13, 14, 5, 15, 10, 11, 3, 0, 4, 12, 9, 6, 8]
 x.distCheck()
 x.findIndex()
@@ -37,10 +40,11 @@ x.findIndex()
 explored.append(x.puzzle)
 
 while x._dist != 0 and cost < 20000000:
-    up = deepcopy(x)
-    down = deepcopy(x)
-    left = deepcopy(x)
-    right = deepcopy(x)
+    up = pickle.loads(pickle.dumps(x))  # deepcopy(x)
+    down = pickle.loads(pickle.dumps(x))  # deepcopy(x)
+    left = pickle.loads(pickle.dumps(x))  # deepcopy(x)
+    right = pickle.loads(pickle.dumps(x))  # deepcopy(x)
+
 
     x1 = up.up()
     x2 = down.down()
@@ -71,7 +75,8 @@ while x._dist != 0 and cost < 20000000:
 
     x = q.get()
     x._globalCost += 1
-    print(cost)
+    if cost % 1000 == 0:
+        print(cost)
     #print(x._dist, " -------", x._globalCost)
     cost += 1
 

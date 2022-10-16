@@ -1,4 +1,5 @@
 import math
+from math import sqrt
 import random
 import numpy as np
 
@@ -64,7 +65,7 @@ class Puzzle:
             g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                             11, 12, 13, 14, 15, 0]).reshape(4, 4)
 
-            for i in range(16):
+            for i in range(15):
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
                 dist += abs((a-x)[0])+abs((b-y)[0])
@@ -74,10 +75,10 @@ class Puzzle:
             g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                             11, 12, 13, 14, 15, 0]).reshape(4, 4)
 
-            for i in range(16):
+            for i in range(15):
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
-                dist += math.sqrt((abs((a-x)[0]) ** 2) + (abs((b-y)[0]) ** 2))
+                dist += sqrt((abs((a-x)[0]) ** 2) + (abs((b-y)[0]) ** 2))
         else:
             for i, j in zip(self.puzzle, range(16)):
                 if i != (j + 1) and (i != 0):
@@ -87,7 +88,7 @@ class Puzzle:
         return dist
 
     def up(self):
-        if(0 in self.puzzle[((self.size ** 2)-self.size):]):
+        if(self.puzzle[15] == 0 or self.puzzle[14] == 0 or self.puzzle[13] == 0 or self.puzzle[12] == 0):
             #print("in bottom: invalid")
             return False
         else:
@@ -99,7 +100,7 @@ class Puzzle:
             return True
 
     def down(self):
-        if(0 in self.puzzle[0:self.size]):
+        if(self.puzzle[0] == 0 or self.puzzle[1] == 0 or self.puzzle[2] == 0 or self.puzzle[3] == 0):
             #print("in top: invalid")
             return False
         else:
@@ -139,6 +140,14 @@ class Puzzle:
 
     def __lt__(self, obj):
         return (self._dist + self._globalCost) < (obj._dist + obj._globalCost)
+
+    """def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, deepcopy(v, memo))
+        return result"""
 
 
 """

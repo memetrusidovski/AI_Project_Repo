@@ -1,9 +1,8 @@
 from pickle import dumps, loads
-from puzzles import Puzzle15
+from puzzles import Puzzle24
 from copy import deepcopy, copy
 from queue import PriorityQueue
 from heapq import heappop, heappush
-import numpy as np
 
 '''
 h1 = the number of misplaced tiles. For Figure 3.28, 
@@ -19,19 +18,21 @@ for i in range(100):
 
 print(x[0])
 """
+
+
 def cpy(obj):
-    t = Puzzle15.Puzzle(shuffle=False, manhat=True)
-    t.puzzle = loads(dumps( obj.puzzle )) 
-    t._dist = (obj._dist)
-    t._globalCost= (obj._globalCost)
-    t._index= (obj._index)
-    return t 
+    t = Puzzle24.Puzzle(shuffle=False, manhat=True)
+    t.puzzle = copy(obj.puzzle)
+    t._dist = copy(obj._dist)
+    t._globalCost = copy(obj._globalCost)
+    t._index = copy(obj._index)
+    return t
 
 
 q = PriorityQueue()
 explored = {""}
 cost = 0
-y = Puzzle15.Puzzle(manhat=True)
+y = Puzzle24.Puzzle(manhat=True)
 
 h = []
 a = heappush(h, y)
@@ -39,10 +40,10 @@ x = y
 
 # [1,2,3,4,5,6,7,8,9,10,11,12,0,13,14,15]
 # [2,7,1,13,14,5,15,10,11,3,0,4,12,9,6,8]
-# [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
-#[1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
+# [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
 if False:
-    x.puzzle = [2, 7, 1, 13, 14, 5, 15, 10, 11, 3, 0, 4, 12, 9, 6, 8]
+    x.puzzle = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 0, 23, 24]
     x.distCheck()
     x.findIndex()
 
@@ -56,9 +57,9 @@ while x._dist != 0 and cost < 20000000:
     right = loads(dumps(x))  # deepcopy(x)"""
 
     up = cpy(x)
-    down =  cpy(x)
-    left =  cpy(x)
-    right =  cpy(x)
+    down = cpy(x)
+    left = cpy(x)
+    right = cpy(x)
 
     x1 = up.up()
     x2 = down.down()
@@ -70,32 +71,24 @@ while x._dist != 0 and cost < 20000000:
         heappush(h, up)
         explored.add(str(up.puzzle))
         up.parent_node = x
-    else:
-        del up
 
     if x2 and str(down.puzzle) not in explored:
         #q.put(down)
         heappush(h, down)
         explored.add(str(down.puzzle))
         down.parent_node = x
-    else:
-        del down
 
     if x3 and str(left.puzzle) not in explored:
         #q.put(left)
         heappush(h, left)
         explored.add(str(left.puzzle))
         left.parent_node = x
-    else:
-        del left 
 
     if x4 and str(right.puzzle) not in explored:
         #q.put(right)
         heappush(h, right)
         explored.add(str(right.puzzle))
         right.parent_node = x
-    else:
-        del right
 
     #x = q.get()
     x = heappop(h)

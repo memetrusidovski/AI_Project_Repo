@@ -1,6 +1,7 @@
 from puzzles import Puzzle8
 from copy import deepcopy
 from queue import PriorityQueue
+from pickle import dumps, loads
 '''
  h2 = the sum of the distances of the tiles from 
 their goal positions. Because tiles cannot move 
@@ -26,18 +27,18 @@ y = Puzzle8.Puzzle(manhat=True)
 
 
 x = y
-if True:
+if False:
     x.puzzle = [8,6,7,2,5,4,3,0,1]#[5,1,4,6,3,8,0,7,2]#[3, 6, 2, 5, 0, 7, 4, 1, 8]
     x.distCheck()
     x.findIndex()
 
 explored.append(x.puzzle)
 
-while x._dist != 0 and cost < 20000:
-    up = deepcopy(x)
-    down = deepcopy(x)
-    left = deepcopy(x)
-    right = deepcopy(x)
+while x._dist != 0 and cost < 200000:
+    up = loads(dumps(x))  # deepcopy(x)
+    down = loads(dumps(x))  # deepcopy(x)
+    left = loads(dumps(x))  # deepcopy(x)
+    right = loads(dumps(x))  # deepcopy(x)
 
     x1 = up.up()
     x2 = down.down()
@@ -69,7 +70,7 @@ while x._dist != 0 and cost < 20000:
     x = q.get()
     x._globalCost += 1
     cost += 1
-
+    print(cost)
 
 temp = x
 lst = []
@@ -81,3 +82,4 @@ for i in lst:
     print(i)
 
 print(x._globalCost)
+print(cost)

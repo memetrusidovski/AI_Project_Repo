@@ -62,15 +62,15 @@ class Puzzle:
         if self._manhat:
             g1 = np.asarray(self.puzzle).reshape(5, 5)
             g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                            11, 12, 13, 14, 15, 0]).reshape(5, 5)
+                            11, 12, 13, 14, 15, 16,17,18,19,20,21,22,23,24, 0]).reshape(5, 5)
 
-            for i in range(25):
+            for i in range(24):
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
                 dist += abs((a-x)[0])+abs((b-y)[0])
 
         else:
-            for i, j in zip(self.puzzle, range(25)):
+            for i, j in zip(self.puzzle, range(24)):
                 if i != (j + 1) and (i != 0):
                     dist += 1
 
