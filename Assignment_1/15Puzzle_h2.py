@@ -44,8 +44,14 @@ x = y
 # [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
 #[1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
 
+#USE YOUR OWN PUZZLE HERE
 if True:
-    x.puzzle = [4,5,2,3,8,7,1,12,6,11,13,0,10,14,9,15]
+    x.puzzle = [5, 1, 2, 4, 7, 0, 6, 3, 9, 10, 12, 8, 13, 14, 11, 15]
+
+
+
+
+
     x.distCheck()
     x.findIndex()
 
@@ -115,3 +121,4 @@ for i in lst:
     print(i)
     
 
+print(x._globalCost, "  <>  ", cost)

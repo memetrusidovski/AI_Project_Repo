@@ -44,7 +44,10 @@ x = y
 # [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
 #[1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
 if True:
-    x.puzzle = [3,12,6,4,11,13,9,10,0,1,14,2,15,7,8,5]
+    x.puzzle = [0, 1, 3, 4, 6, 2, 15, 7, 5, 9, 11, 8, 13, 14, 10, 12]
+
+
+
     x.distCheck()
     x.findIndex()
 
@@ -113,4 +116,4 @@ while temp.parent_node != None:
 for i in lst:
     print(i)
     #print(i._index)
-print(x._globalCost)
+print(x._globalCost, "  <>  ", cost)

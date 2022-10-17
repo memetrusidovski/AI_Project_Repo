@@ -1,10 +1,9 @@
 from random import randint
-from turtle import pu
 from puzzles import Puzzle15
 
 
 puzzles = []
-for i in range(500):
+for i in range(50):
     t = Puzzle15.Puzzle(shuffle=False)
     t.distCheck()
     t.findIndex()
@@ -15,7 +14,7 @@ x.distCheck()
 x.findIndex()
 
 for j in puzzles:
-    for i in range(20):
+    for i in range(100):
         r = randint(0,3)
         if r == 0:
             j.up()
