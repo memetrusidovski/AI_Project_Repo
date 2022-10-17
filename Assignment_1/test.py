@@ -1,10 +1,12 @@
 from pickle import dumps, loads
+from typing import List, Set
 from puzzles import Puzzle15
 from copy import deepcopy, copy
 from queue import PriorityQueue
 from heapq import heappop, heappush
 import numpy as np
-
+from pympler import asizeof
+import threading
 '''
 h1 = the number of misplaced tiles. For Figure 3.28, 
 all of the eight tiles are out of position, so the 
@@ -19,23 +21,20 @@ for i in range(100):
 
 print(x[0])
 """
-def cpy(obj):
-    t = Puzzle15.Puzzle(shuffle=False, manhat=True)
-    t.puzzle = loads(dumps( obj.puzzle )) 
-    t._dist = (obj._dist)
-    t._globalCost= (obj._globalCost)
-    t._index= (obj._index)
-    return t 
+
+
 
 
 q = PriorityQueue()
-explored = {""}
+explored: Set[str] = {""}
 cost = 0
-y = Puzzle15.Puzzle(manhat=True)
+y = Puzzle15.Puzzle()
 
 h = []
 a = heappush(h, y)
 x = y
+
+print(asizeof.asizeof(x))
 
 # [1,2,3,4,5,6,7,8,9,10,11,12,0,13,14,15]
 # [2,7,1,13,14,5,15,10,11,3,0,4,12,9,6,8]
@@ -49,16 +48,73 @@ if False:
 print(x.puzzle)
 explored.add(str(x.puzzle))
 
-while x._dist != 0 and cost < 20000000:
-    """up = loads(dumps(x),fast=True)  # deepcopy(x)
-    down = loads(dumps(x))  # deepcopy(x)
-    left = loads(dumps(x))  # deepcopy(x)
-    right = loads(dumps(x))  # deepcopy(x)"""
+up = None
+down = None 
+left = None 
+right = None 
 
-    up = cpy(x)
-    down =  cpy(x)
-    left =  cpy(x)
-    right =  cpy(x)
+
+def cpyU(obj):
+    print(obj)
+    t = Puzzle15.Puzzle(shuffle=False)
+    t.puzzle = loads(dumps(x.puzzle))
+    t._dist = (x._dist)
+    t._globalCost = (x._globalCost)
+    t._index = (x._index)
+    up = t
+    return t
+
+
+def cpyD(obj):
+    print(obj)
+    t = Puzzle15.Puzzle(shuffle=False)
+    t.puzzle = loads(dumps(x.puzzle))
+    t._dist = (x._dist)
+    t._globalCost = (x._globalCost)
+    t._index = (x._index)
+    down = t
+    return t
+
+
+def cpyL(obj):
+    print(obj)
+    t = Puzzle15.Puzzle(shuffle=False)
+    t.puzzle = loads(dumps(x.puzzle))
+    t._dist = (x._dist)
+    t._globalCost = (x._globalCost)
+    t._index = (x._index)
+    left = t
+    return t
+
+
+def cpyR(obj):
+    print(obj)
+    t = Puzzle15.Puzzle(shuffle=False)
+    t.puzzle = loads(dumps(x.puzzle))
+    t._dist = (x._dist)
+    t._globalCost = (x._globalCost)
+    t._index = (x._index)
+    right = t
+    return t
+
+while x._dist != 0 and cost < 20000000:
+
+    thr1 = threading.Thread(target=cpyU, args=(x,))
+    thr2 = threading.Thread(target=cpyR, args=(x,))
+    thr3 = threading.Thread(target=cpyL, args=(x,))
+    thr4 = threading.Thread(target=cpyR, args=(x,))
+
+    thr1.start()
+    thr2.start()
+    thr3.start()
+    thr4.start()
+
+    thr1.join()
+    thr2.join()
+    thr3.join()
+    thr4.join()
+    
+    print(up)
 
     x1 = up.up()
     x2 = down.down()
@@ -69,7 +125,7 @@ while x._dist != 0 and cost < 20000000:
         #q.put(up)
         heappush(h, up)
         explored.add(str(up.puzzle))
-        up.parent_node = x
+        #up.parent_node = x
     else:
         del up
 
@@ -77,7 +133,7 @@ while x._dist != 0 and cost < 20000000:
         #q.put(down)
         heappush(h, down)
         explored.add(str(down.puzzle))
-        down.parent_node = x
+        #down.parent_node = x
     else:
         del down
 
@@ -85,7 +141,7 @@ while x._dist != 0 and cost < 20000000:
         #q.put(left)
         heappush(h, left)
         explored.add(str(left.puzzle))
-        left.parent_node = x
+        #left.parent_node = x
     else:
         del left 
 
@@ -93,7 +149,7 @@ while x._dist != 0 and cost < 20000000:
         #q.put(right)
         heappush(h, right)
         explored.add(str(right.puzzle))
-        right.parent_node = x
+        #right.parent_node = x
     else:
         del right
 
@@ -104,6 +160,7 @@ while x._dist != 0 and cost < 20000000:
         print(cost)
     #print(x._dist, " -------", x._globalCost)
     cost += 1
+
 
 
 temp = x

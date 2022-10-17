@@ -15,9 +15,6 @@ for i in range(100):
 """
 
 
-
-
-
 q = PriorityQueue()
 explored = {""}
 cost = 0 
@@ -46,13 +43,6 @@ while x._dist != 0 and cost < 2000000:
     x3 = left.left()
     x4 = right.right()
 
-    """up._globalCost += 1 
-    down._globalCost += 1 
-    left._globalCost += 1
-    right._globalCost += 1"""
-
-    #print(x)
-
     if x1 and str(up.puzzle) not in explored:
         q.put(up)
         explored.add(str(up.puzzle))
@@ -76,7 +66,9 @@ while x._dist != 0 and cost < 2000000:
 
     x = q.get()
     x._globalCost += 1 
-    print(cost)
+    
+    if cost % 100 == 0:
+        print(cost)
     #print(x._dist, " -------", x._globalCost)
     cost += 1
 

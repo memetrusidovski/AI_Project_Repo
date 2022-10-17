@@ -17,6 +17,14 @@ print(x[0])
 """
 
 
+def cpy(obj):
+    t = Puzzle8.Puzzle(shuffle=False, ecd=True)
+    t.puzzle = [*obj.puzzle]
+    t._dist = (obj._dist)
+    t._globalCost = (obj._globalCost)
+    t._index = (obj._index)
+    return t
+
 q = PriorityQueue()
 explored = []
 cost = 0
@@ -27,17 +35,19 @@ z = Puzzle8.Puzzle(shuffle=False)
 x = y
 
 # [5, 1, 4, 6, 3, 8, 0, 7, 2]  # [3, 6, 2, 5, 0, 7, 4, 1, 8]
-x.puzzle = [5, 1, 4, 6, 3, 8, 0, 7, 2]  # [8, 6, 7, 2, 5, 4, 3, 0, 1]
-x.distCheck()
-x.findIndex()
+if True:
+    x.puzzle = [8, 6, 7, 2, 5, 4, 3, 0, 1]
+    x.distCheck()
+    x.findIndex()
 
 explored.append(x.puzzle)
 
 while x._dist != 0 and cost < 2000000:
-    up = deepcopy(x)
-    down = deepcopy(x)
-    left = deepcopy(x)
-    right = deepcopy(x)
+    up = cpy(x)
+    down = cpy(x)
+    left = cpy(x)
+    right = cpy(x)
+
 
     x1 = up.up()
     x2 = down.down()
@@ -50,35 +60,37 @@ while x._dist != 0 and cost < 2000000:
         q.put(up)
         explored.append(up.puzzle)
         up.parent_node = x
-        #print(up, up.puzzle, "up", up._index, "index", "\n\n")
+        
     if x2 and down.puzzle not in explored:
         q.put(down)
         explored.append(down.puzzle)
         down.parent_node = x
-        #print(down, down.puzzle, "down", down._index, "index", "\n\n\n")
+        
     if x3 and left.puzzle not in explored:
         q.put(left)
         explored.append(left.puzzle)
         left.parent_node = x
-        #print(left, left.puzzle, "left", left._index, "index", "\n\n\n")
+        
     if x4 and right.puzzle not in explored:
         q.put(right)
         explored.append(right.puzzle)
         right.parent_node = x
-        #print(right, right.puzzle, "right", right._index, "index", "\n\n")
-
+        
     x = q.get()
     x._globalCost += 1
-    #print(x)
-    #print(x._dist, " -------", x._globalCost)
+    
     cost += 1
 
+    if cost % 1000 == 0:
+        print(cost)
 
 temp = x
 lst = []
 while temp.parent_node != None:
     lst.append(temp)
     temp = temp.parent_node
+
+print(x._globalCost, "  ", cost)
 
 for i in lst:
     print(i)

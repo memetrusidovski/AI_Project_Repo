@@ -1,6 +1,7 @@
 import math
 from math import sqrt
 import random
+from typing import List
 import numpy as np
 
 '''
@@ -19,11 +20,11 @@ class Puzzle:
 
     def __init__(self, size=4, shuffle=True, manhat=False, ecd=False):
         self.size = size
-        self.puzzle = []  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
+        self.puzzle: List[int] = []  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
         self.createPuz(size)
         self._index = 16
         self._dist = 0
-        self._solved = False
+        
         self._globalCost = 0
         self.parent_node = None
         self._manhat = manhat

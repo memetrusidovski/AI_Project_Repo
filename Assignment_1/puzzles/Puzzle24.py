@@ -1,3 +1,4 @@
+from math import sqrt
 import math
 import random
 import numpy as np
@@ -16,7 +17,7 @@ the matrix is divided equally so,
 
 class Puzzle:
 
-    def __init__(self, size=5, shuffle=True, manhat=False):
+    def __init__(self, size=5, shuffle=True, manhat=False, ecd=False):
         self.size = size
         self.puzzle = [] 
         self.createPuz(size)
@@ -26,6 +27,7 @@ class Puzzle:
         self._globalCost = 0
         self.parent_node = None
         self._manhat = manhat
+        self._ecd = ecd
 
         if(shuffle):
             self.scramble()
@@ -68,7 +70,15 @@ class Puzzle:
                 a, b = np.where(g1 == i+1)
                 x, y = np.where(g2 == i+1)
                 dist += abs((a-x)[0])+abs((b-y)[0])
+        if self._ecd:
+            g1 = np.asarray(self.puzzle).reshape(5, 5)
+            g2 = np.asarray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                            11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0]).reshape(5, 5)
 
+            for i in range(24):
+                a, b = np.where(g1 == i+1)
+                x, y = np.where(g2 == i+1)
+                dist += sqrt (abs((a-x)[0])**2 +abs((b-y)[0])**2)
         else:
             for i, j in zip(self.puzzle, range(24)):
                 if i != (j + 1) and (i != 0):
@@ -132,7 +142,7 @@ class Puzzle:
         return (self._dist + self._globalCost) < (obj._dist + obj._globalCost)
 
 
-
+"""
 #Testing
 x = Puzzle()
 
@@ -145,5 +155,5 @@ x.up()
 x.left()
 x.right()
 print(x)
-
+"""
 
