@@ -46,11 +46,7 @@ x = y
 
 #USE YOUR OWN PUZZLE HERE
 if True:
-    x.puzzle = [3, 2, 0, 4, 5, 1, 7, 8, 13, 6, 10, 11, 14, 9, 15, 12]
-
-
-
-
+    x.puzzle = [2, 9, 3, 4, 1, 5, 0, 8, 13, 6, 7, 15, 10, 11, 14, 12]
     x.distCheck()
     x.findIndex()
 
