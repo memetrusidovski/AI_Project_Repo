@@ -21,7 +21,7 @@ print(x[0])
 
 
 def cpy(obj):
-    t = Puzzle24.Puzzle(shuffle=False, manhat=True)
+    t = Puzzle24.Puzzle(shuffle=False, ecd=True)
     t.puzzle = copy(obj.puzzle)
     t._dist = copy(obj._dist)
     t._globalCost = copy(obj._globalCost)
@@ -32,7 +32,7 @@ def cpy(obj):
 q = PriorityQueue()
 explored = {""}
 cost = 0
-y = Puzzle24.Puzzle(manhat=True)
+y = Puzzle24.Puzzle(ecd=True)
 
 h = []
 a = heappush(h, y)
@@ -42,11 +42,8 @@ x = y
 # [2,7,1,13,14,5,15,10,11,3,0,4,12,9,6,8]
 # [2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
 if True:
-    x.puzzle = [1, 2, 3, 4, 0, 6, 7, 8, 9, 5, 11, 12, 14,
-                15, 10, 16, 17, 13, 19, 20, 21, 22, 18, 23, 24]
-
-
-
+    x.puzzle = [1, 2, 3, 4, 5, 6, 7, 8, 10, 0, 11, 12,
+                13, 9, 15, 16, 17, 18, 14, 20, 21, 22, 23, 19, 24]
     x.distCheck()
     x.findIndex()
 
@@ -102,3 +99,4 @@ for i in lst:
     print(i)
     #print(i._index)
 print(x._globalCost, "  <> ", cost)
+

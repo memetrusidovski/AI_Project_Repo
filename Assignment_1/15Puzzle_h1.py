@@ -44,7 +44,8 @@ x = y
 # [2, 1, 3, 4 ,5 ,6 ,7 ,8 ,9, 10, 11, 12, 13, 14, 15,0]
 #[1, 2, 3, 4, 5, 6, 7, 8, 0, 10, 11, 12, 9, 13, 14, 15]
 if True:
-    x.puzzle = [0, 1, 3, 4, 6, 2, 15, 7, 5, 9, 11, 8, 13, 14, 10, 12]
+    x.puzzle = [0, 1, 2, 14, 5, 8, 10, 4, 6, 9, 3, 11, 13, 15, 7, 12]
+
 
 
 
@@ -54,7 +55,7 @@ if True:
 print(x.puzzle)
 explored.add(str(x.puzzle))
 
-while x._dist != 0 and cost < 20000000:
+while x._dist != 0 and cost < 10000000:
     up = cpy(x)
     down = cpy(x)
     left = cpy(x)
