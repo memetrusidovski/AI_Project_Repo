@@ -2,6 +2,8 @@ import numpy as np
 import math
 from copy import copy, deepcopy
 from queue import PriorityQueue
+from func import *
+from queue import Queue
 
 board = [
     [7, 8, 0, 4, 0, 0, 1, 2, 0],
@@ -14,21 +16,6 @@ board = [
     [1, 2, 0, 0, 0, 7, 4, 0, 0],
     [0, 4, 9, 2, 0, 6, 0, 0, 7]
 ]
-
-def print_board(b):
-    for i in range(len(b)):
-        if i % 3 == 0 and i != 0:
-            print("- - - - - - - - - - - - - ")
-
-        for j in range(len(b[0])):
-            if j % 3 == 0 and j != 0:
-                print(" | ", end="")
-
-            if j == 8:
-                print(b[i][j])
-            else:
-                print(str(b[i][j]) + " ", end="")
-
-print_board(board)
-
+#print_board(board)
 # Variables, Constraints, Domains
+
