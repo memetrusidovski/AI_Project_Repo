@@ -34,7 +34,7 @@ def createArcQueue(domain, arc):
     for i in domain:
         # Check for arcs only in empty squares
         if domain[i] != 'x':
-            # Row Consistency 
+            # Row Consistency
             row = abc[i[0]]
             for x in range(9):
                 if x != int(i[1]):
@@ -61,7 +61,7 @@ def AC3(arc, domain, board):
     B = True
     for i in range(1032):
     #while not arc.empty():
-        
+
         revise(arc, domain, board)
 
     return B
@@ -70,15 +70,15 @@ def AC3(arc, domain, board):
 def revise(arc, domain, board):
     B = True
     temp = arc.get()
-    
+
     print(arc.qsize())
-        
+
     if board[temp[1][0]][temp[1][1]] in domain[temp[0]]:
         domain[temp[0]].remove(board[temp[1][0]][temp[1][1]])
         addArc(domain, arc)
 
-        
-        
+
+
 
 
     if len(domain[temp[0]]) == 0:
