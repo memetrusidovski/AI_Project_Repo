@@ -16,6 +16,21 @@ board = [
     [1, 2, 0, 0, 0, 7, 4, 0, 0],
     [0, 4, 9, 2, 0, 6, 0, 0, 7]
 ]
-#print_board(board)
-# Variables, Constraints, Domains
+arc = Queue()
+domain = {}
 
+# Variables - All zero's, Constraints - Rules of Game, Domains - All possible scenario's
+
+#print_board(board)
+createDomain(board, domain)
+#printDomain(domain)
+createArcQueue(domain, arc)
+r = arc.qsize()
+
+
+
+AC3(arc, domain, board)
+printDomain(domain)
+
+
+#printArc(arc)
