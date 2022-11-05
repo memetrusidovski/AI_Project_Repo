@@ -33,4 +33,4 @@ AC3(arc, domain, board)
 printDomain(domain)
 
 
-#printArc(arc)
+printArc(arc)
