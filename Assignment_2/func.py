@@ -58,32 +58,56 @@ def createArcQueue(domain, arc):
     return
 
 def AC3(arc, domain, board):
+    B = True
     for i in range(1032):
     #while not arc.empty():
-        temp = arc.get()
-        revise(temp, domain, board)
+        
+        revise(arc, domain, board)
 
-    return 0
+    return B
 
 
 def revise(arc, domain, board):
     B = True
-
+    temp = arc.get()
     
     print(arc.qsize())
         
     if board[temp[1][0]][temp[1][1]] in domain[temp[0]]:
         domain[temp[0]].remove(board[temp[1][0]][temp[1][1]])
-    
-    
-    if domain[temp[0]] != 'x' and len(domain[temp[0]]) > 1:
-        arc.put(temp)
+        addArc(domain, arc)
+
+        
+        
 
 
     if len(domain[temp[0]]) == 0:
         B = False
 
     return B
+
+def addArc(domain, arc):
+    row = abc[i[0]]
+    for x in range(9):
+        if x != int(i[1]):
+            arc.put([i, (row, x)])
+
+    # Colum Consistency
+    col = int(i[1])
+    for y in range(9):
+        if y != abc[i[0]]:
+            arc.put([i, (y, col)])
+
+    # Box Consistency
+    quadY = abc[i[0]] - abc[i[0]] % 3
+    quadX = int(i[1]) - int(i[1]) % 3
+
+    for y in range(3):
+        for x in range(3):
+            if (quadX + x) != int(i[1]) or (quadY + y) != abc[i[0]]:
+                arc.put([i, (quadY + y, quadX + x)])
+
+
 
 def printDomain(domain):
     for i in domain:
