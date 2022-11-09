@@ -41,7 +41,7 @@ r = arc.qsize()
 
 AC3(arc, domain, board)
 
-backtrack(board, 0, 0)
+#backtrack(board, 0, 0)
 
 printDomain(domain)
 print_board(board)
