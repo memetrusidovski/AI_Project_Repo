@@ -1,10 +1,8 @@
-import numpy as np
-import math
-from copy import copy, deepcopy
-from queue import PriorityQueue
+import ast
 from func import *
 from queue import Queue
 
+#Default Sudoku Board
 board = [
     [7, 8, 0, 4, 0, 0, 1, 2, 0],
     [6, 0, 0, 0, 7, 5, 0, 0, 9],
@@ -17,33 +15,46 @@ board = [
     [0, 4, 9, 2, 0, 6, 0, 0, 7]
 ]
 
-board1 = [[5, 3, 0, 0, 7, 0, 0, 0, 0],
-         [6, 0, 0, 1, 9, 5, 0, 0, 0],
-         [0, 9, 8, 0, 0, 0, 0, 6, 0],
-         [8, 0, 0, 0, 6, 0, 0, 0, 3],
-         [4, 0, 0, 8, 0, 3, 0, 0, 1],
-         [7, 0, 0, 0, 2, 0, 0, 0, 6],
-         [0, 6, 0, 0, 0, 0, 2, 8, 0],
-         [0, 0, 0, 4, 1, 9, 0, 0, 5],
-         [0, 0, 0, 0, 8, 0, 0, 7, 9]]
+
+with open('/Users/schoolaccount/Documents/GitHub/AI_Project_Repo/Assignment_2/sudoku.txt') as f:
+    temp = []
+    x = f.readlines()
+    for lines in x:
+        if lines != '\n' and lines[0] != '#':
+            w = ast.literal_eval(lines)
+            w = [int(x) for x in w]
+            temp.append(w)
+        else:
+            break
+
+    print(print_board(temp))
+    board = temp
+
          
+# Variables - All zero's, Constraints - Rules of Game, Domains - All possible scenario's
 arc = Queue()
 domain = {}
 
-# Variables - All zero's, Constraints - Rules of Game, Domains - All possible scenario's
-
-
+# Populate domain and arc queue
 createDomain(board, domain)
 #printDomain(domain)
 createArcQueue(domain, arc)
-r = arc.qsize()
 
 
 AC3(arc, domain, board)
 
-#backtrack(board, 0, 0)
+# If the queue is empty the puzzle is solved 
+if arc.qsize() == 0:
+    print_board(board)
+    print("Arc Queue Size: ",arc.qsize())
+    print("SOLVED")
+else:
+    # Finish solving the board 
+    backtrack(board, 0, 0)
+    printDomain(domain)
 
-printDomain(domain)
-print_board(board)
-print(arc.qsize())
+    print_board(board)
+
+    print("WAS NOT SOLVED - Backtracking...")
+
 #printArc(arc)
