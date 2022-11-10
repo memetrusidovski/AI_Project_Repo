@@ -2,6 +2,24 @@ import ast
 from func import *
 from queue import Queue
 
+"""
+------------------------------------------------------------------------------------------
+File:    sudoku.py
+Project: AI_Project_Repo
+Purpose: 
+==========================================================================================
+
+Program Description:
+  This program solves a sudoku puzzle giving in the format
+  of a 2d array. The program reads the first puzzle from the 
+  txt file and attempts to solve it.
+------------------------------------------------------------------------------------------
+Group:   14
+Email:   rusi1550@mylaurier.ca
+Version  2022-11-09
+-------------------------------------
+"""
+
 #Default Sudoku Board
 board = [
     [7, 8, 0, 4, 0, 0, 1, 2, 0],
@@ -58,3 +76,4 @@ else:
     print("WAS NOT SOLVED - Backtracking...")
 
 #printArc(arc)
+printDomain(domain)

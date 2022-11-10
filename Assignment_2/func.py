@@ -88,7 +88,7 @@ def AC3(arc, domain, board):
     while not arc.empty() and c < 10000 and isTrue:
         isTrue = revise(arc, domain, board)
         c += 1
-
+        
     return B
 
 
