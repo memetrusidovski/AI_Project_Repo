@@ -38,7 +38,8 @@ def print_board(b):
 #Create a domain for each empty cell
 def createDomain(board, q):
     abc = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
-
+    
+    
     for x, letter in zip(board, abc):
         count = 0
         for y in x:

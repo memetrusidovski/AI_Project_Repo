@@ -1,2 +1,4 @@
 def minimax():
-    return
+   return
+
+print("testing: ") 
