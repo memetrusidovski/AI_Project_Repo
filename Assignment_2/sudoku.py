@@ -1,7 +1,6 @@
 import ast
 from func import *
 from queue import Queue
-
 """
 ------------------------------------------------------------------------------------------
 File:    sudoku.py

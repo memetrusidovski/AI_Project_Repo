@@ -129,24 +129,6 @@ class Termination(enum.Enum):
     """See :func:`chess.Board.is_variant_draw()`."""
 
 
-@dataclasses.dataclass
-class Outcome:
-    """
-    Information about the outcome of an ended game, usually obtained from
-    :func:`chess.Board.outcome()`.
-    """
-
-    termination: Termination
-    """The reason for the game to have ended."""
-
-    winner: Optional[Color]
-    """The winning color or ``None`` if drawn."""
-
-    def result(self) -> str:
-        """Returns ``1-0``, ``0-1`` or ``1/2-1/2``."""
-        return "1/2-1/2" if self.winner is None else ("1-0" if self.winner else "0-1")
-
-
 class InvalidMoveError(ValueError):
     """Raised when move notation is not syntactically valid"""
 
@@ -175,12 +157,6 @@ SQUARE_NAMES = [f + r for r in RANK_NAMES for f in FILE_NAMES]
 
 
 def parse_square(name: str) -> Square:
-    """
-    Gets the square index for the given square *name*
-    (e.g., ``a1`` returns ``0``).
-
-    :raises: :exc:`ValueError` if the square name is invalid.
-    """
     return SQUARE_NAMES.index(name)
 
 
@@ -293,7 +269,6 @@ popcount: Callable[[Bitboard], int] = getattr(
 
 
 def flip_vertical(bb: Bitboard) -> Bitboard:
-    # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipVertically
     bb = ((bb >> 8) & 0x00ff_00ff_00ff_00ff) | (
         (bb & 0x00ff_00ff_00ff_00ff) << 8)
     bb = ((bb >> 16) & 0x0000_ffff_0000_ffff) | (
@@ -303,7 +278,6 @@ def flip_vertical(bb: Bitboard) -> Bitboard:
 
 
 def flip_horizontal(bb: Bitboard) -> Bitboard:
-    # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#MirrorHorizontally
     bb = ((bb >> 1) & 0x5555_5555_5555_5555) | (
         (bb & 0x5555_5555_5555_5555) << 1)
     bb = ((bb >> 2) & 0x3333_3333_3333_3333) | (
@@ -314,7 +288,6 @@ def flip_horizontal(bb: Bitboard) -> Bitboard:
 
 
 def flip_diagonal(bb: Bitboard) -> Bitboard:
-    # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipabouttheDiagonal
     t = (bb ^ (bb << 28)) & 0x0f0f_0f0f_0000_0000
     bb = bb ^ t ^ (t >> 28)
     t = (bb ^ (bb << 14)) & 0x3333_0000_3333_0000
@@ -325,7 +298,6 @@ def flip_diagonal(bb: Bitboard) -> Bitboard:
 
 
 def flip_anti_diagonal(bb: Bitboard) -> Bitboard:
-    # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipabouttheAntidiagonal
     t = bb ^ (bb << 36)
     bb = bb ^ ((t ^ (bb >> 36)) & 0xf0f0_f0f0_0f0f_0f0f)
     t = (bb ^ (bb << 18)) & 0xcccc_0000_cccc_0000
