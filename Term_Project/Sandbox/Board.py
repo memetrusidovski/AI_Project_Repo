@@ -137,7 +137,7 @@ class Board(BaseBoard):
         20
         >>> bool(board.legal_moves)
         True
-        >>> move = chess.Move.from_uci("g1f3")
+        >>> move = chess.Move.from_uci("g1f3") more code
         >>> move in board.legal_moves
         True
 

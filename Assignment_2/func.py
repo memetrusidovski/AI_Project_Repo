@@ -104,7 +104,7 @@ def revise(arc, domain, board):
     # it's domain
     if board[temp[1][0]][temp[1][1]] in domain[temp[0]]:
         domain[temp[0]].remove(board[temp[1][0]][temp[1][1]])
-        
+        arc.put(temp)
 
     # If the empty cell has a domain of zero that means the board is not solvable 
     # and return false 
@@ -117,8 +117,8 @@ def revise(arc, domain, board):
         board[abc[s[0]]][int(s[1])] = domain[temp[0]][0]
 
     # If the domain is 2 or more then an arc between the points is still needed
-    if len(domain[temp[0]]) >= 2:
-        arc.put(temp)
+    #if len(domain[temp[0]]) >= 2:
+    #    arc.put(temp)
 
     return B
 

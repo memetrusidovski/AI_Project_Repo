@@ -21,15 +21,15 @@ Version  2022-11-09
 
 #Default Sudoku Board
 board = [
-    [7, 8, 0, 4, 0, 0, 1, 2, 0],
-    [6, 0, 0, 0, 7, 5, 0, 0, 9],
-    [0, 0, 0, 6, 0, 1, 0, 7, 8],
-    [0, 0, 7, 0, 4, 0, 2, 6, 0],
-    [0, 0, 1, 0, 5, 0, 9, 3, 0],
-    [9, 0, 4, 0, 6, 0, 0, 0, 5],
-    [0, 7, 0, 3, 0, 0, 0, 1, 2],
-    [1, 2, 0, 0, 0, 7, 4, 0, 0],
-    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+    [8, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 3, 6, 0, 0, 0, 0, 0],
+    [0, 7, 0, 0, 9, 0, 2, 0, 0],
+    [0, 5, 0, 0, 0, 7, 0, 0, 0],
+    [0, 0, 0, 0, 4, 5, 7, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 3, 0],
+    [0, 0, 1, 0, 0, 0, 0, 6, 8],
+    [0, 0, 8, 5, 0, 0, 0, 1, 0],
+    [0, 9, 0, 0, 0, 0, 4, 0, 0]
 ]
 
 
@@ -54,7 +54,7 @@ domain = {}
 
 # Populate domain and arc queue
 createDomain(board, domain)
-#printDomain(domain)
+printDomain(domain)
 createArcQueue(domain, arc)
 
 
@@ -65,14 +65,16 @@ if arc.qsize() == 0:
     print_board(board)
     print("Arc Queue Size: ",arc.qsize())
     print("SOLVED")
-else:
+
     # Finish solving the board 
-    backtrack(board, 0, 0)
-    printDomain(domain)
+backtrack(board, 0, 0)
+printDomain(domain)
 
-    print_board(board)
+print_board(board)
 
-    print("WAS NOT SOLVED - Backtracking...")
+print("WAS NOT SOLVED - Backtracking...")
 
 #printArc(arc)
 printDomain(domain)
+
+# -> ("a2", (5,2))
