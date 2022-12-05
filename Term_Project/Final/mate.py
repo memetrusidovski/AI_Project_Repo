@@ -7,7 +7,7 @@ board = moveGen.Board('8/8/6p1/7k/3r2NP/B5PK/2br1R2/8 w - - 0 1')
 
 
 moves = list(board.legal_moves)
-print(len(moves))
+print(board.unicode())
 #board.push_san('g1h3')
 '''
 for i in moves:
@@ -20,7 +20,7 @@ moves.count
 moved = set()
 def search(b, m, d, who):
     #Search too deep
-    if d > 2:
+    if d > 5:
         return False
 
     #Create the new node
@@ -28,13 +28,12 @@ def search(b, m, d, who):
 
     #Do a move from the list
     s = str(m.pop())
-    moved.add(s)
+    
     temp.push_san(s)
 
-    if temp.is_checkmate() :
-        print(temp, "<--")
-        return True
-
+    if temp.is_checkmate() and who == 0:
+        print(temp, "<--\n")
+        return temp
     elif len(m) > 0:
         #print(temp)
         search(b, m, d, who)
@@ -42,10 +41,11 @@ def search(b, m, d, who):
     
     moves = list(temp.legal_moves)
     
-    if temp.is_check() or who != 1: 
-        print(moves)
+    if temp.is_check() and who == 0: 
+        #print(moves)
         search(temp, moves, d + 1, 1)
-
+    elif who == 1:
+        search(temp, moves, d + 1, 0)
 
     return False
 
