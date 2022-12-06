@@ -1113,153 +1113,7 @@ class BaseBoard:
         """
         self._set_piece_map(pieces)
 
-    def _set_chess960_pos(self, scharnagl: int) -> None:
-        if not 0 <= scharnagl <= 959:
-            raise ValueError(
-                f"chess960 position index not 0 <= {scharnagl!r} <= 959")
 
-        # See http://www.russellcottrell.com/Chess/Chess960.htm for
-        # a description of the algorithm.
-        n, bw = divmod(scharnagl, 4)
-        n, bb = divmod(n, 4)
-        n, q = divmod(n, 6)
-
-        for n1 in range(0, 4):
-            n2 = n + (3 - n1) * (4 - n1) // 2 - 5
-            if n1 < n2 and 1 <= n2 <= 4:
-                break
-
-        # Bishops.
-        bw_file = bw * 2 + 1
-        bb_file = bb * 2
-        self.bishops = (BB_FILES[bw_file] | BB_FILES[bb_file]) & BB_BACKRANKS
-
-        # Queens.
-        q_file = q
-        q_file += int(min(bw_file, bb_file) <= q_file)
-        q_file += int(max(bw_file, bb_file) <= q_file)
-        self.queens = BB_FILES[q_file] & BB_BACKRANKS
-
-        used = [bw_file, bb_file, q_file]
-
-        # Knights.
-        self.knights = BB_EMPTY
-        for i in range(0, 8):
-            if i not in used:
-                if n1 == 0 or n2 == 0:
-                    self.knights |= BB_FILES[i] & BB_BACKRANKS
-                    used.append(i)
-                n1 -= 1
-                n2 -= 1
-
-        # RKR.
-        for i in range(0, 8):
-            if i not in used:
-                self.rooks = BB_FILES[i] & BB_BACKRANKS
-                used.append(i)
-                break
-        for i in range(1, 8):
-            if i not in used:
-                self.kings = BB_FILES[i] & BB_BACKRANKS
-                used.append(i)
-                break
-        for i in range(2, 8):
-            if i not in used:
-                self.rooks |= BB_FILES[i] & BB_BACKRANKS
-                break
-
-        # Finalize.
-        self.pawns = BB_RANK_2 | BB_RANK_7
-        self.occupied_co[WHITE] = BB_RANK_1 | BB_RANK_2
-        self.occupied_co[BLACK] = BB_RANK_7 | BB_RANK_8
-        self.occupied = BB_RANK_1 | BB_RANK_2 | BB_RANK_7 | BB_RANK_8
-        self.promoted = BB_EMPTY
-
-    def set_chess960_pos(self, scharnagl: int) -> None:
-        """
-        Sets up a Chess960 starting position given its index between 0 and 959.
-        Also see :func:`~chess.BaseBoard.from_chess960_pos()`.
-        """
-        self._set_chess960_pos(scharnagl)
-
-    def chess960_pos(self) -> Optional[int]:
-        """
-        Gets the Chess960 starting position index between 0 and 959,
-        or ``None``.
-        """
-        if self.occupied_co[WHITE] != BB_RANK_1 | BB_RANK_2:
-            return None
-        if self.occupied_co[BLACK] != BB_RANK_7 | BB_RANK_8:
-            return None
-        if self.pawns != BB_RANK_2 | BB_RANK_7:
-            return None
-        if self.promoted:
-            return None
-
-        # Piece counts.
-        brnqk = [self.bishops, self.rooks,
-                 self.knights, self.queens, self.kings]
-        if [popcount(pieces) for pieces in brnqk] != [4, 4, 4, 2, 2]:
-            return None
-
-        # Symmetry.
-        if any((BB_RANK_1 & pieces) << 56 != BB_RANK_8 & pieces for pieces in brnqk):
-            return None
-
-        # Algorithm from ChessX, src/database/bitboard.cpp, r2254.
-        x = self.bishops & (2 + 8 + 32 + 128)
-        if not x:
-            return None
-        bs1 = (lsb(x) - 1) // 2
-        cc_pos = bs1
-        x = self.bishops & (1 + 4 + 16 + 64)
-        if not x:
-            return None
-        bs2 = lsb(x) * 2
-        cc_pos += bs2
-
-        q = 0
-        qf = False
-        n0 = 0
-        n1 = 0
-        n0f = False
-        n1f = False
-        rf = 0
-        n0s = [0, 4, 7, 9]
-        for square in range(A1, H1 + 1):
-            bb = BB_SQUARES[square]
-            if bb & self.queens:
-                qf = True
-            elif bb & self.rooks or bb & self.kings:
-                if bb & self.kings:
-                    if rf != 1:
-                        return None
-                else:
-                    rf += 1
-
-                if not qf:
-                    q += 1
-
-                if not n0f:
-                    n0 += 1
-                elif not n1f:
-                    n1 += 1
-            elif bb & self.knights:
-                if not qf:
-                    q += 1
-
-                if not n0f:
-                    n0f = True
-                elif not n1f:
-                    n1f = True
-
-        if n0 < 4 and n1f and qf:
-            cc_pos += q * 16
-            krn = n0s[n0] + n1
-            cc_pos += krn * 96
-            return cc_pos
-        else:
-            return None
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}({self.board_fen()!r})"
@@ -1433,19 +1287,7 @@ class BaseBoard:
         """
         return cls(None)
 
-    @classmethod
-    def from_chess960_pos(cls: Type[BaseBoardT], scharnagl: int) -> BaseBoardT:
-        """
-        Creates a new board, initialized with a Chess960 starting position.
 
-        >>> import chess
-        >>> import random
-        >>>
-        >>> board = chess.Board.from_chess960_pos(random.randint(0, 959))
-        """
-        board = cls.empty()
-        board.set_chess960_pos(scharnagl)
-        return board
 
 
 BoardT = TypeVar("BoardT", bound="Board")
@@ -2640,45 +2482,9 @@ class Board(BaseBoard):
     def set_piece_map(self, pieces: Mapping[Square, Piece]) -> None:
         super().set_piece_map(pieces)
         self.clear_stack()
+ 
 
-    def set_chess960_pos(self, scharnagl: int) -> None:
-        super().set_chess960_pos(scharnagl)
-        self.chess960 = True
-        self.turn = WHITE
-        self.castling_rights = self.rooks
-        self.ep_square = None
-        self.halfmove_clock = 0
-        self.fullmove_number = 1
-
-        self.clear_stack()
-
-    def chess960_pos(self, *, ignore_turn: bool = False, ignore_castling: bool = False, ignore_counters: bool = True) -> Optional[int]:
-        """
-        Gets the Chess960 starting position index between 0 and 956,
-        or ``None`` if the current position is not a Chess960 starting
-        position.
-
-        By default, white to move (**ignore_turn**) and full castling rights
-        (**ignore_castling**) are required, but move counters
-        (**ignore_counters**) are ignored.
-        """
-        if self.ep_square:
-            return None
-
-        if not ignore_turn:
-            if self.turn != WHITE:
-                return None
-
-        if not ignore_castling:
-            if self.clean_castling_rights() != self.rooks:
-                return None
-
-        if not ignore_counters:
-            if self.fullmove_number != 1 or self.halfmove_clock != 0:
-                return None
-
-        return super().chess960_pos()
-
+   
     def _epd_operations(self, operations: Mapping[str, Union[None, str, int, float, Move, Iterable[Move]]]) -> str:
         epd = []
         first_op = True
@@ -3398,30 +3204,6 @@ class Board(BaseBoard):
                 return True
 
             castling_rights &= castling_rights - 1
-
-        return False
-
-    def has_chess960_castling_rights(self) -> bool:
-        """
-        Checks if there are castling rights that are only possible in Chess960.
-        """
-        # Get valid Chess960 castling rights.
-        chess960 = self.chess960
-        self.chess960 = True
-        castling_rights = self.clean_castling_rights()
-        self.chess960 = chess960
-
-        # Standard chess castling rights can only be on the standard
-        # starting rook squares.
-        if castling_rights & ~BB_CORNERS:
-            return True
-
-        # If there are any castling rights in standard chess, the king must be
-        # on e1 or e8.
-        if castling_rights & BB_RANK_1 and not self.occupied_co[WHITE] & self.kings & BB_E1:
-            return True
-        if castling_rights & BB_RANK_8 and not self.occupied_co[BLACK] & self.kings & BB_E8:
-            return True
 
         return False
 
