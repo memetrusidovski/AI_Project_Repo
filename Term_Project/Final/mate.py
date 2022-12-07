@@ -1,7 +1,8 @@
 import moveGen
 
 #then you make board
-board = moveGen.Board('r5rk/5p1p/5R2/4B3/8/8/7P/7K w KQ - 1 26')
+board = moveGen.Board("1k5r/pP3ppp/3p2b1/1BN1n3/1Q2P3/P1B5/KP3P1P/7q w - - 1 0")
+    #'r5rk/5p1p/5R2/4B3/8/8/7P/7K w KQ - 1 26')
 #then you have list of moves with following line
 
 
@@ -65,39 +66,4 @@ print(search(board, list(board.legal_moves), 0, 0))
 print("There was,", solutions, "checkmate scenario's")
 
 
-'''brds = []
-brds2 = []
-brds3 = []
 
-
-for j in moves:
-    temp = board.copy()
-    temp.push_san(str(j))
-    if temp.is_check():
-        brds.append(temp.fen())
-
-for i in brds:
-    board = moveGen.Board(i)
-    moves = list(board.legal_moves)
-    for j in moves:
-        temp = board.copy()
-        temp.push_san(str(j))
-        brds2.append(temp.fen())
-
-for i in brds2:
-    board = moveGen.Board(i)
-    moves = list(board.legal_moves)
-    for j in moves:
-        temp = board.copy()
-        temp.push_san(str(j))
-        if temp.is_checkmate():
-            print("YES")
-            brds3.append(temp.fen())
-
-for i in brds3:
-    print(i)
-#print(f"{bP:b}")
-
-print(moveGen.Board('r5rk/5p2/7R/4B2p/7P/8/8/7K b - - 1 27').unicode())
- 
-'''

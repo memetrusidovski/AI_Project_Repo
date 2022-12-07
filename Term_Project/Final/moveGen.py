@@ -1,11 +1,4 @@
 
-"""
-A chess library with move generation and validation,
-Polyglot opening book probing, PGN reading and writing,
-Gaviota tablebase probing,
-Syzygy tablebase probing, and XBoard/UCI engine communication.
-"""
-
 from __future__ import annotations
 
 import collections
@@ -33,19 +26,19 @@ COLOR_NAMES = ["black", "white"]
 
 PieceType = int
 PIECE_TYPES = [PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING] = range(1, 7)
-PIECE_SYMBOLS = [None, "p", "n", "b", "r", "q", "k"]
+pieceSymbolS = [None, "p", "n", "b", "r", "q", "k"]
 PIECE_NAMES = [None, "pawn", "knight", "bishop", "rook", "queen", "king"]
 
 
-def piece_symbol(piece_type: PieceType) -> str:
-    return typing.cast(str, PIECE_SYMBOLS[piece_type])
+def pieceSymbol(piece_type: PieceType) -> str:
+    return typing.cast(str, pieceSymbolS[piece_type])
 
 
 def piece_name(piece_type: PieceType) -> str:
     return typing.cast(str, PIECE_NAMES[piece_type])
 
 
-UNICODE_PIECE_SYMBOLS = {
+UNICODE_pieceSymbolS = {
     "R": "♖", "r": "♜",
     "N": "♘", "n": "♞",
     "B": "♗", "b": "♝",
@@ -173,7 +166,7 @@ SQUARES = [
     A8, B8, C8, D8, E8, F8, G8, H8,
 ] = range(64)
 
-SQUARE_NAMES = [f + r for r in RANK_NAMES for f in FILE_NAMES]
+squareName = [f + r for r in RANK_NAMES for f in FILE_NAMES]
 
 
 def parse_square(name: str) -> Square:
@@ -183,12 +176,12 @@ def parse_square(name: str) -> Square:
 
     :raises: :exc:`ValueError` if the square name is invalid.
     """
-    return SQUARE_NAMES.index(name)
+    return squareName.index(name)
 
 
 def square_name(square: Square) -> str:
     """Gets the name of the square, like ``a3``."""
-    return SQUARE_NAMES[square]
+    return squareName[square]
 
 
 def square(file_index: int, rank_index: int) -> Square:
@@ -327,7 +320,6 @@ def flip_diagonal(bb: Bitboard) -> Bitboard:
 
 
 def flip_anti_diagonal(bb: Bitboard) -> Bitboard:
-    # https://www.chessprogramming.org/Flipping_Mirroring_and_Rotating#FlipabouttheAntidiagonal
     t = bb ^ (bb << 36)
     bb = bb ^ ((t ^ (bb >> 36)) & 0xf0f0_f0f0_0f0f_0f0f)
     t = (bb ^ (bb << 18)) & 0xcccc_0000_cccc_0000
@@ -504,7 +496,7 @@ class Piece:
         Gets the symbol ``P``, ``N``, ``B``, ``R``, ``Q`` or ``K`` for white
         pieces or the lower-case variants for the black pieces.
         """
-        symbol = piece_symbol(self.piece_type)
+        symbol = pieceSymbol(self.piece_type)
         return symbol.upper() if self.color else symbol
 
     def unicode_symbol(self, *, invert_color: bool = False) -> str:
@@ -512,7 +504,7 @@ class Piece:
         Gets the Unicode character for the piece.
         """
         symbol = self.symbol().swapcase() if invert_color else self.symbol()
-        return UNICODE_PIECE_SYMBOLS[symbol]
+        return UNICODE_pieceSymbolS[symbol]
 
     def __hash__(self) -> int:
         return self.piece_type + (-1 if self.color else 5)
@@ -523,9 +515,6 @@ class Piece:
     def __str__(self) -> str:
         return self.symbol()
 
-    def _repr_svg_(self) -> str:
-        import chess.svg
-        return chess.svg.piece(self, size=45)
 
     @classmethod
     def from_symbol(cls, symbol: str) -> Piece:
@@ -534,7 +523,7 @@ class Piece:
 
         :raises: :exc:`ValueError` if the symbol is invalid.
         """
-        return cls(PIECE_SYMBOLS.index(symbol.lower()), symbol.isupper())
+        return cls(pieceSymbolS.index(symbol.lower()), symbol.isupper())
 
 
 @dataclasses.dataclass(unsafe_hash=True)
@@ -568,11 +557,11 @@ class Move:
         The UCI representation of a null move is ``0000``.
         """
         if self.drop:
-            return piece_symbol(self.drop).upper() + "@" + SQUARE_NAMES[self.to_square]
+            return pieceSymbol(self.drop).upper() + "@" + squareName[self.to_square]
         elif self.promotion:
-            return SQUARE_NAMES[self.from_square] + SQUARE_NAMES[self.to_square] + piece_symbol(self.promotion)
+            return squareName[self.from_square] + squareName[self.to_square] + pieceSymbol(self.promotion)
         elif self:
-            return SQUARE_NAMES[self.from_square] + SQUARE_NAMES[self.to_square]
+            return squareName[self.from_square] + squareName[self.to_square]
         else:
             return "0000"
 
@@ -599,16 +588,16 @@ class Move:
             return cls.null()
         elif len(uci) == 4 and "@" == uci[1]:
             try:
-                drop = PIECE_SYMBOLS.index(uci[0].lower())
-                square = SQUARE_NAMES.index(uci[2:])
+                drop = pieceSymbolS.index(uci[0].lower())
+                square = squareName.index(uci[2:])
             except ValueError:
                 raise InvalidMoveError(f"invalid uci: {uci!r}")
             return cls(square, square, drop=drop)
         elif 4 <= len(uci) <= 5:
             try:
-                from_square = SQUARE_NAMES.index(uci[0:2])
-                to_square = SQUARE_NAMES.index(uci[2:4])
-                promotion = PIECE_SYMBOLS.index(
+                from_square = squareName.index(uci[0:2])
+                to_square = squareName.index(uci[2:4])
+                promotion = pieceSymbolS.index(
                     uci[4]) if len(uci) == 5 else None
             except ValueError:
                 raise InvalidMoveError(f"invalid uci: {uci!r}")
@@ -937,12 +926,6 @@ class BaseBoard:
         return piece_type
 
     def remove_piece_at(self, square: Square) -> Optional[Piece]:
-        """
-        Removes the piece from the given square. Returns the
-        :class:`~chess.Piece` or ``None`` if the square was already empty.
-
-        :class:`~chess.Board` also clears the move stack.
-        """
         color = bool(self.occupied_co[WHITE] & BB_SQUARES[square])
         piece_type = self._remove_piece_at(square)
         return Piece(piece_type, color) if piece_type else None
@@ -1051,7 +1034,7 @@ class BaseBoard:
                             f"'~' not after piece in position part of fen: {fen!r}")
                     previous_was_digit = False
                     previous_was_piece = False
-                elif c.lower() in PIECE_SYMBOLS:
+                elif c.lower() in pieceSymbolS:
                     field_sum += 1
                     previous_was_digit = False
                     previous_was_piece = True
@@ -1071,7 +1054,7 @@ class BaseBoard:
         for c in fen:
             if c in ["1", "2", "3", "4", "5", "6", "7", "8"]:
                 square_index += int(c)
-            elif c.lower() in PIECE_SYMBOLS:
+            elif c.lower() in pieceSymbolS:
                 piece = Piece.from_symbol(c)
                 self._set_piece_at(
                     SQUARES_180[square_index], piece.piece_type, piece.color)
@@ -2234,7 +2217,7 @@ class Board(BaseBoard):
             self.chess960, from_square, to_square, promotion)
         if not self.is_legal(move):
             raise IllegalMoveError(
-                f"no matching legal move for {move.uci()} ({SQUARE_NAMES[from_square]} -> {SQUARE_NAMES[to_square]}) in {self.fen()}")
+                f"no matching legal move for {move.uci()} ({squareName[from_square]} -> {squareName[to_square]}) in {self.fen()}")
 
         return move
 
@@ -2253,34 +2236,7 @@ class Board(BaseBoard):
 
         return "".join(builder)
 
-    def castling_xfen(self) -> str:
-        builder = []
 
-        for color in COLORS:
-            king = self.king(color)
-            if king is None:
-                continue
-
-            king_file = square_file(king)
-            backrank = BB_RANK_1 if color == WHITE else BB_RANK_8
-
-            for rook_square in scan_reversed(self.clean_castling_rights() & backrank):
-                rook_file = square_file(rook_square)
-                a_side = rook_file < king_file
-
-                other_rooks = self.occupied_co[color] & self.rooks & backrank & ~BB_SQUARES[rook_square]
-
-                if any((square_file(other) < rook_file) == a_side for other in scan_reversed(other_rooks)):
-                    ch = FILE_NAMES[rook_file]
-                else:
-                    ch = "q" if a_side else "k"
-
-                builder.append(ch.upper() if color == WHITE else ch)
-
-        if builder:
-            return "".join(builder)
-        else:
-            return "-"
 
     def has_pseudo_legal_en_passant(self) -> bool:
         """Checks if there is a pseudo-legal en passant capture."""
@@ -2375,7 +2331,7 @@ class Board(BaseBoard):
             ep_square = None
         else:
             try:
-                ep_square = None if ep_part == "-" else SQUARE_NAMES.index(
+                ep_square = None if ep_part == "-" else squareName.index(
                     ep_part)
             except ValueError:
                 raise ValueError(f"invalid en passant part in fen: {fen!r}")
@@ -2565,7 +2521,7 @@ class Board(BaseBoard):
         epd = [self.board_fen(promoted=promoted),
                "w" if self.turn == WHITE else "b",
                self.castling_shredder_fen() if shredder else self.castling_xfen(),
-               SQUARE_NAMES[ep_square] if ep_square is not None else "-"]
+               squareName[ep_square] if ep_square is not None else "-"]
 
         if operations:
             epd.append(self._epd_operations(operations))
@@ -2767,8 +2723,8 @@ class Board(BaseBoard):
         if move.drop:
             san = ""
             if move.drop != PAWN:
-                san = piece_symbol(move.drop).upper()
-            san += "@" + SQUARE_NAMES[move.to_square]
+                san = pieceSymbol(move.drop).upper()
+            san += "@" + squareName[move.to_square]
             return san
 
         # Castling.
@@ -2785,10 +2741,10 @@ class Board(BaseBoard):
         if piece_type == PAWN:
             san = ""
         else:
-            san = piece_symbol(piece_type).upper()
+            san = pieceSymbol(piece_type).upper()
 
         if long:
-            san += SQUARE_NAMES[move.from_square]
+            san += squareName[move.from_square]
         elif piece_type != PAWN:
             # Get ambiguous move candidates.
             # Relevant candidates: not exactly the current move,
@@ -2826,42 +2782,15 @@ class Board(BaseBoard):
             san += "-"
 
         # Destination square.
-        san += SQUARE_NAMES[move.to_square]
+        san += squareName[move.to_square]
 
         # Promotion.
         if move.promotion:
-            san += "=" + piece_symbol(move.promotion).upper()
+            san += "=" + pieceSymbol(move.promotion).upper()
 
         return san
 
-    def variation_san(self, variation: Iterable[Move]) -> str:
-        """
-        Given a sequence of moves, returns a string representing the sequence
-        in standard algebraic notation (e.g., ``1. e4 e5 2. Nf3 Nc6`` or
-        ``37...Bg6 38. fxg6``).
 
-        The board will not be modified as a result of calling this.
-
-        :raises: :exc:`IllegalMoveError` if any moves in the sequence are illegal.
-        """
-        board = self.copy(stack=False)
-        san = []
-
-        for move in variation:
-            if not board.is_legal(move):
-                raise IllegalMoveError(
-                    f"illegal move {move} in position {board.fen()}")
-
-            if board.turn == WHITE:
-                san.append(
-                    f"{board.fullmove_number}. {board.san_and_push(move)}")
-            elif not san:
-                san.append(
-                    f"{board.fullmove_number}...{board.san_and_push(move)}")
-            else:
-                san.append(board.san_and_push(move))
-
-        return " ".join(san)
 
     def parse_san(self, san: str) -> Move:
         """
@@ -2900,12 +2829,12 @@ class Board(BaseBoard):
                 raise InvalidMoveError(f"invalid san: {san!r}")
 
         # Get target square. Mask our own pieces to exclude castling moves.
-        to_square = SQUARE_NAMES.index(match.group(4))
+        to_square = squareName.index(match.group(4))
         to_mask = BB_SQUARES[to_square] & ~self.occupied_co[self.turn]
 
         # Get the promotion piece type.
         p = match.group(5)
-        promotion = PIECE_SYMBOLS.index(p[-1].lower()) if p else None
+        promotion = pieceSymbolS.index(p[-1].lower()) if p else None
 
         # Filter by original square.
         from_mask = BB_ALL
@@ -2918,7 +2847,7 @@ class Board(BaseBoard):
 
         # Filter by piece type.
         if match.group(1):
-            piece_type = PIECE_SYMBOLS.index(match.group(1).lower())
+            piece_type = pieceSymbolS.index(match.group(1).lower())
             from_mask &= self.pieces_mask(piece_type, self.turn)
         elif match.group(2) and match.group(3):
             # Allow fully specified moves, even if they are not pawn moves,
@@ -2971,80 +2900,7 @@ class Board(BaseBoard):
         self.push(move)
         return move
 
-    def uci(self, move: Move, *, chess960: Optional[bool] = None) -> str:
-        """
-        Gets the UCI notation of the move.
 
-        *chess960* defaults to the mode of the board. Pass ``True`` to force
-        Chess960 mode.
-        """
-        if chess960 is None:
-            chess960 = self.chess960
-
-        move = self._to_chess960(move)
-        move = self._from_chess960(
-            chess960, move.from_square, move.to_square, move.promotion, move.drop)
-        return move.uci()
-
-    def parse_uci(self, uci: str) -> Move:
-        """
-        Parses the given move in UCI notation.
-
-        Supports both Chess960 and standard UCI notation.
-
-        The returned move is guaranteed to be either legal or a null move.
-
-        :raises:
-            :exc:`ValueError` (specifically an exception specified below) if the move is invalid or illegal in the
-            current position (but not a null move).
-                - :exc:`InvalidMoveError` if the UCI is syntactically invalid.
-                - :exc:`IllegalMoveError` if the UCI is illegal.
-        """
-        move = Move.from_uci(uci)
-
-        if not move:
-            return move
-
-        move = self._to_chess960(move)
-        move = self._from_chess960(
-            self.chess960, move.from_square, move.to_square, move.promotion, move.drop)
-
-        if not self.is_legal(move):
-            raise IllegalMoveError(f"illegal uci: {uci!r} in {self.fen()}")
-
-        return move
-
-    def push_uci(self, uci: str) -> Move:
-        """
-        Parses a move in UCI notation and puts it on the move stack.
-
-        Returns the move.
-
-        :raises:
-            :exc:`ValueError` (specifically an exception specified below) if the move is invalid or illegal in the
-            current position (but not a null move).
-                - :exc:`InvalidMoveError` if the UCI is syntactically invalid.
-                - :exc:`IllegalMoveError` if the UCI is illegal.
-        """
-        move = self.parse_uci(uci)
-        self.push(move)
-        return move
-
-    def xboard(self, move: Move, chess960: Optional[bool] = None) -> str:
-        if chess960 is None:
-            chess960 = self.chess960
-
-        if not chess960 or not self.is_castling(move):
-            return move.xboard()
-        elif self.is_kingside_castling(move):
-            return "O-O"
-        else:
-            return "O-O-O"
-
-    def parse_xboard(self, xboard: str) -> Move:
-        return self.parse_san(xboard)
-
-    push_xboard = push_san
 
     def is_en_passant(self, move: Move) -> bool:
         """Checks if the given pseudo-legal move is an en passant capture."""
@@ -3535,13 +3391,7 @@ class Board(BaseBoard):
         else:
             return f"{type(self).__name__}({self.fen()!r}, chess960=True)"
 
-    def _repr_svg_(self) -> str:
-        import chess.svg
-        return chess.svg.board(
-            board=self,
-            size=390,
-            lastmove=self.peek() if self.move_stack else None,
-            check=self.king(self.turn) if self.is_check() else None)
+
 
     def __eq__(self, board: object) -> bool:
         if isinstance(board, Board):
@@ -3689,348 +3539,3 @@ class LegalMoveGenerator:
 IntoSquareSet = Union[SupportsInt, Iterable[Square]]
 
 
-class SquareSet:
-    """
-    A set of squares.
-
-    >>> import chess
-    >>>
-    >>> squares = chess.SquareSet([chess.A8, chess.A1])
-    >>> squares
-    SquareSet(0x0100_0000_0000_0001)
-
-    >>> squares = chess.SquareSet(chess.BB_A8 | chess.BB_RANK_1)
-    >>> squares
-    SquareSet(0x0100_0000_0000_00ff)
-
-    >>> print(squares)
-    1 . . . . . . .
-    . . . . . . . .
-    . . . . . . . .
-    . . . . . . . .
-    . . . . . . . .
-    . . . . . . . .
-    . . . . . . . .
-    1 1 1 1 1 1 1 1
-
-    >>> len(squares)
-    9
-
-    >>> bool(squares)
-    True
-
-    >>> chess.B1 in squares
-    True
-
-    >>> for square in squares:
-    ...     # 0 -- chess.A1
-    ...     # 1 -- chess.B1
-    ...     # 2 -- chess.C1
-    ...     # 3 -- chess.D1
-    ...     # 4 -- chess.E1
-    ...     # 5 -- chess.F1
-    ...     # 6 -- chess.G1
-    ...     # 7 -- chess.H1
-    ...     # 56 -- chess.A8
-    ...     print(square)
-    ...
-    0
-    1
-    2
-    3
-    4
-    5
-    6
-    7
-    56
-
-    >>> list(squares)
-    [0, 1, 2, 3, 4, 5, 6, 7, 56]
-
-    Square sets are internally represented by 64-bit integer masks of the
-    included squares. Bitwise operations can be used to compute unions,
-    intersections and shifts.
-
-    >>> int(squares)
-    72057594037928191
-
-    Also supports common set operations like
-    :func:`~chess.SquareSet.issubset()`, :func:`~chess.SquareSet.issuperset()`,
-    :func:`~chess.SquareSet.union()`, :func:`~chess.SquareSet.intersection()`,
-    :func:`~chess.SquareSet.difference()`,
-    :func:`~chess.SquareSet.symmetric_difference()` and
-    :func:`~chess.SquareSet.copy()` as well as
-    :func:`~chess.SquareSet.update()`,
-    :func:`~chess.SquareSet.intersection_update()`,
-    :func:`~chess.SquareSet.difference_update()`,
-    :func:`~chess.SquareSet.symmetric_difference_update()` and
-    :func:`~chess.SquareSet.clear()`.
-    """
-
-    def __init__(self, squares: IntoSquareSet = BB_EMPTY) -> None:
-        try:
-            self.mask = squares.__int__() & BB_ALL  # type: ignore
-            return
-        except AttributeError:
-            self.mask = 0
-
-        # Try squares as an iterable. Not under except clause for nicer
-        # backtraces.
-        for square in squares:  # type: ignore
-            self.add(square)
-
-    # Set
-
-    def __contains__(self, square: Square) -> bool:
-        return bool(BB_SQUARES[square] & self.mask)
-
-    def __iter__(self) -> Iterator[Square]:
-        return scan_forward(self.mask)
-
-    def __reversed__(self) -> Iterator[Square]:
-        return scan_reversed(self.mask)
-
-    def __len__(self) -> int:
-        return popcount(self.mask)
-
-    # MutableSet
-
-    def add(self, square: Square) -> None:
-        """Adds a square to the set."""
-        self.mask |= BB_SQUARES[square]
-
-    def discard(self, square: Square) -> None:
-        """Discards a square from the set."""
-        self.mask &= ~BB_SQUARES[square]
-
-    # frozenset
-
-    def isdisjoint(self, other: IntoSquareSet) -> bool:
-        """Tests if the square sets are disjoint."""
-        return not bool(self & other)
-
-    def issubset(self, other: IntoSquareSet) -> bool:
-        """Tests if this square set is a subset of another."""
-        return not bool(self & ~SquareSet(other))
-
-    def issuperset(self, other: IntoSquareSet) -> bool:
-        """Tests if this square set is a superset of another."""
-        return not bool(~self & other)
-
-    def union(self, other: IntoSquareSet) -> SquareSet:
-        return self | other
-
-    def __or__(self, other: IntoSquareSet) -> SquareSet:
-        r = SquareSet(other)
-        r.mask |= self.mask
-        return r
-
-    def intersection(self, other: IntoSquareSet) -> SquareSet:
-        return self & other
-
-    def __and__(self, other: IntoSquareSet) -> SquareSet:
-        r = SquareSet(other)
-        r.mask &= self.mask
-        return r
-
-    def difference(self, other: IntoSquareSet) -> SquareSet:
-        return self - other
-
-    def __sub__(self, other: IntoSquareSet) -> SquareSet:
-        r = SquareSet(other)
-        r.mask = self.mask & ~r.mask
-        return r
-
-    def symmetric_difference(self, other: IntoSquareSet) -> SquareSet:
-        return self ^ other
-
-    def __xor__(self, other: IntoSquareSet) -> SquareSet:
-        r = SquareSet(other)
-        r.mask ^= self.mask
-        return r
-
-    def copy(self) -> SquareSet:
-        return SquareSet(self.mask)
-
-    # set
-
-    def update(self, *others: IntoSquareSet) -> None:
-        for other in others:
-            self |= other
-
-    def __ior__(self, other: IntoSquareSet) -> SquareSet:
-        self.mask |= SquareSet(other).mask
-        return self
-
-    def intersection_update(self, *others: IntoSquareSet) -> None:
-        for other in others:
-            self &= other
-
-    def __iand__(self, other: IntoSquareSet) -> SquareSet:
-        self.mask &= SquareSet(other).mask
-        return self
-
-    def difference_update(self, other: IntoSquareSet) -> None:
-        self -= other
-
-    def __isub__(self, other: IntoSquareSet) -> SquareSet:
-        self.mask &= ~SquareSet(other).mask
-        return self
-
-    def symmetric_difference_update(self, other: IntoSquareSet) -> None:
-        self ^= other
-
-    def __ixor__(self, other: IntoSquareSet) -> SquareSet:
-        self.mask ^= SquareSet(other).mask
-        return self
-
-    def remove(self, square: Square) -> None:
-        """
-        Removes a square from the set.
-
-        :raises: :exc:`KeyError` if the given *square* was not in the set.
-        """
-        mask = BB_SQUARES[square]
-        if self.mask & mask:
-            self.mask ^= mask
-        else:
-            raise KeyError(square)
-
-    def pop(self) -> Square:
-        """
-        Removes and returns a square from the set.
-
-        :raises: :exc:`KeyError` if the set is empty.
-        """
-        if not self.mask:
-            raise KeyError("pop from empty SquareSet")
-
-        square = lsb(self.mask)
-        self.mask &= (self.mask - 1)
-        return square
-
-    def clear(self) -> None:
-        """Removes all elements from this set."""
-        self.mask = BB_EMPTY
-
-    # SquareSet
-
-    def carry_rippler(self) -> Iterator[Bitboard]:
-        """Iterator over the subsets of this set."""
-        return _carry_rippler(self.mask)
-
-    def mirror(self) -> SquareSet:
-        """Returns a vertically mirrored copy of this square set."""
-        return SquareSet(flip_vertical(self.mask))
-
-    def tolist(self) -> List[bool]:
-        """Converts the set to a list of 64 bools."""
-        result = [False] * 64
-        for square in self:
-            result[square] = True
-        return result
-
-    def __bool__(self) -> bool:
-        return bool(self.mask)
-
-    def __eq__(self, other: object) -> bool:
-        try:
-            return self.mask == SquareSet(other).mask  # type: ignore
-        except (TypeError, ValueError):
-            return NotImplemented
-
-    def __lshift__(self, shift: int) -> SquareSet:
-        return SquareSet((self.mask << shift) & BB_ALL)
-
-    def __rshift__(self, shift: int) -> SquareSet:
-        return SquareSet(self.mask >> shift)
-
-    def __ilshift__(self, shift: int) -> SquareSet:
-        self.mask = (self.mask << shift) & BB_ALL
-        return self
-
-    def __irshift__(self, shift: int) -> SquareSet:
-        self.mask >>= shift
-        return self
-
-    def __invert__(self) -> SquareSet:
-        return SquareSet(~self.mask & BB_ALL)
-
-    def __int__(self) -> int:
-        return self.mask
-
-    def __index__(self) -> int:
-        return self.mask
-
-    def __repr__(self) -> str:
-        return f"SquareSet({self.mask:#021_x})"
-
-    def __str__(self) -> str:
-        builder = []
-
-        for square in SQUARES_180:
-            mask = BB_SQUARES[square]
-            builder.append("1" if self.mask & mask else ".")
-
-            if not mask & BB_FILE_H:
-                builder.append(" ")
-            elif square != H1:
-                builder.append("\n")
-
-        return "".join(builder)
-
-    def _repr_svg_(self) -> str:
-        import chess.svg
-        return chess.svg.board(squares=self, size=390)
-
-    @classmethod
-    def ray(cls, a: Square, b: Square) -> SquareSet:
-        """
-        All squares on the rank, file or diagonal with the two squares, if they
-        are aligned.
-
-        >>> import chess
-        >>>
-        >>> print(chess.SquareSet.ray(chess.E2, chess.B5))
-        . . . . . . . .
-        . . . . . . . .
-        1 . . . . . . .
-        . 1 . . . . . .
-        . . 1 . . . . .
-        . . . 1 . . . .
-        . . . . 1 . . .
-        . . . . . 1 . .
-        """
-        return cls(ray(a, b))
-
-    @classmethod
-    def between(cls, a: Square, b: Square) -> SquareSet:
-        """
-        All squares on the rank, file or diagonal between the two squares
-        (bounds not included), if they are aligned.
-
-        >>> import chess
-        >>>
-        >>> print(chess.SquareSet.between(chess.E2, chess.B5))
-        . . . . . . . .
-        . . . . . . . .
-        . . . . . . . .
-        . . . . . . . .
-        . . 1 . . . . .
-        . . . 1 . . . .
-        . . . . . . . .
-        . . . . . . . .
-        """
-        return cls(between(a, b))
-
-    @classmethod
-    def from_square(cls, square: Square) -> SquareSet:
-        """
-        Creates a :class:`~chess.SquareSet` from a single square.
-
-        >>> import chess
-        >>>
-        >>> chess.SquareSet.from_square(chess.A1) == chess.BB_A1
-        True
-        """
-        return cls(BB_SQUARES[square])
