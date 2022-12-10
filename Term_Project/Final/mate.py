@@ -1,23 +1,8 @@
 import moveGen
 
-#then you make board
 board = moveGen.Board("1k5r/pP3ppp/3p2b1/1BN1n3/1Q2P3/P1B5/KP3P1P/7q w - - 1 0")
-    #'r5rk/5p1p/5R2/4B3/8/8/7P/7K w KQ - 1 26')
-#then you have list of moves with following line
-
 
 moves = list(board.legal_moves)
-#print(board.unicode())
-#board.push_san('g1h3')
-'''
-for i in moves:
-    print(i)
-print(board.fen())
-print(board.is_checkmate())
-moves.count
-'''
-
-moved = set()
 solutions = 0
 
 def search(b, m, d, who):
